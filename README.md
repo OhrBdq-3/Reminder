@@ -79,3 +79,21 @@ flet build windows -v
 ```
 
 For more details on building Windows package, refer to the [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).
+
+
+        ┌────────────┐
+        │    UI      │  ← Flet
+        │ (Dialog)   │
+        └─────▲──────┘
+              │ 用户操作
+              │
+        ┌─────┴──────┐
+        │ Repository │  ← SQLite
+        │  (Data)    │
+        └─────▲──────┘
+              │ 查询
+              │
+        ┌─────┴──────┐
+        │ Scheduler  │  ← Thread
+        │  (Time)    │
+        └────────────┘
