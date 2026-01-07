@@ -4,6 +4,8 @@ class ReminderToast(ft.Container):
     def __init__(self, reminder, on_done = None, on_snooze = None):
         super().__init__()
         self.reminder = reminder
+        self.on_done = on_done
+        self.on_snooze = on_snooze
         self.content = ft.Column(
             spacing = 8,
             controls = [
@@ -33,8 +35,8 @@ class ReminderToast(ft.Container):
                 ft.Row(
                     alignment=ft.MainAxisAlignment.END,
                     controls=[
-                        ft.TextButton("Done", on_click=lambda e: on_done(reminder)),
-                        ft.TextButton("Snooze", on_click=lambda e: on_snooze(reminder)),
+                        ft.TextButton("Done", on_click=lambda e, r=reminder: self.on_done(r)),
+                        ft.TextButton("Snooze", on_click=lambda e, r=reminder: self.on_snooze(r)),
                     ],
                 ),
             ]

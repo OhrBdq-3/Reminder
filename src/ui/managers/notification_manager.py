@@ -1,10 +1,11 @@
 from ui.views.reminder_toast import ReminderToast
 import flet as ft
-
+from datetime import datetime, timedelta
 
 class NotificationManager:
-    def __init__(self, page, on_refresh):
+    def __init__(self, page, repo, on_refresh):
         self.page = page
+        self.repo = repo
         self.on_refresh = on_refresh
         self.toast_column = ft.Column(
             spacing=10,
@@ -37,15 +38,25 @@ class NotificationManager:
         self.page.update()
 
     def _on_done(self, reminder):
+        if reminder.repeat == "none":
+            reminder.status = "done"
+        else:
+            self._after_triggered(reminder)
+        reminder.is_snoozed = 0
+        self.repo.update(reminder)
         self._remove(reminder)
         self.on_refresh()
-        self.page.update()
+
         print(f"Done: {reminder.title}")
 
     def _on_snooze(self, reminder):
+        reminder.next_trigger_time = datetime.now() + timedelta(minutes=10)
+        reminder.is_snoozed = 1
+        reminder.status = "pending"
+        self.repo.update(reminder)
         self._remove(reminder)
         self.on_refresh()
-        self.page.update()
+
         print(f"Snoozed: {reminder.title}")
 
     def _remove(self, reminder):
@@ -54,3 +65,27 @@ class NotificationManager:
                 self.toast_column.controls.remove(c)
         self.page.update()
 
+
+    def _after_triggered(self,reminder):
+        if reminder.repeat == "none":
+            reminder.status = "done"
+
+        elif reminder.repeat == "daily":
+            reminder.next_trigger_time += timedelta(days=1)
+        
+        elif reminder.repeat == "workdays":
+            d = reminder.next_trigger_time
+            while True:
+                d += timedelta(days = 1)
+                if d.weekday() < 5:
+                    break
+            reminder.next_trigger_time = d
+        
+        elif reminder.repeat == "weekend":
+            d = reminder.next_trigger_time
+            while True:
+                d += timedelta(days = 1)
+                if d.weekday() >= 5:
+                    break
+            reminder.next_trigger_time = d
+        self.repo.update(reminder)

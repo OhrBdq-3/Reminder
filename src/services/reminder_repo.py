@@ -24,28 +24,28 @@ class ReminderRepository:
             description TEXT,
             status TEXT NOT NULL,
             option TEXT NOT NULL,
-            repeat TEXT NOT NULL
+            repeat TEXT NOT NULL,
+            IS_SNOOZED BOOLEAN NOT NULL DEFAULT 0
         )
         """)
         self.conn.commit()
 
     def add(self, reminder: Reminder) -> Reminder:
-        print(reminder.option)
-        cur = self.conn.execute(
-            "INSERT INTO reminders (id, title, base_time, next_trigger_time, description, status, option, repeat) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        self.conn.execute(
+            "INSERT INTO reminders (id, title, base_time, next_trigger_time, description, status, option, repeat, is_snoozed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
-                reminder.id, 
+                str(reminder.id),
                 reminder.title, 
                 reminder.base_time.strftime("%H:%M:%S"), 
                 reminder.next_trigger_time.strftime("%Y-%m-%d %H:%M:%S"), 
                 reminder.description, 
                 reminder.status, 
                 reminder.option, 
-                reminder.repeat
+                reminder.repeat,
+                reminder.is_snoozed
             )
         )
         self.conn.commit()
-        reminder.id = cur.lastrowid
         return reminder
 
     def list_all(self) -> list[Reminder]:
@@ -59,7 +59,8 @@ class ReminderRepository:
                 description=row["description"],
                 status = row["status"],
                 option = row["option"],
-                repeat = row["repeat"]
+                repeat = row["repeat"],
+                is_snoozed=row["is_snoozed"]
             )
             for row in rows
         ]
@@ -70,6 +71,6 @@ class ReminderRepository:
 
     def update(self, reminder: Reminder):
         self.conn.execute(
-            "update reminders set title = ?, base_time = ?, next_trigger_time = ?, description = ?, status = ?, option = ?, repeat = ? where id = ?"
-        ,(reminder.title, reminder.base_time.strftime("%H:%M:%S"), reminder.next_trigger_time.strftime("%Y-%m-%d %H:%M:%S"), reminder.description, reminder.status, reminder.option, reminder.repeat, reminder.id))
+            "update reminders set title = ?, base_time = ?, next_trigger_time = ?, description = ?, status = ?, option = ?, repeat = ?, is_snoozed = ?  where id = ?"
+        ,(reminder.title, reminder.base_time.strftime("%H:%M:%S"), reminder.next_trigger_time.strftime("%Y-%m-%d %H:%M:%S"), reminder.description, reminder.status, reminder.option, reminder.repeat, reminder.is_snoozed, reminder.id))
         self.conn.commit()

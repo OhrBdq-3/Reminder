@@ -4,20 +4,28 @@ from ui.views.edit_dialog import EditField
 class ReminderCard(ft.Card):
     def __init__(self, reminder,
                  on_delete = None,
+                 on_edit = None,
                 ):
         
         super().__init__()
         self.elevation = 2
         self.reminder = reminder
         self.on_delete = on_delete
+        self.on_edit = on_edit
         self.description_text = ft.Text(self.reminder.description, expand=True, selectable=True, size = 13, color = ft.Colors.GREY_700,) if self.reminder.description else None
         self.option = self.reminder.option
+        self.is_snoozed = reminder.is_snoozed
+
         if self.reminder.status == "pending":
-            self.status_color = ft.Colors.BLUE_900
-            self.leading_icon = ft.Icons.ALARM
+            if self.reminder.is_snoozed == 0:
+                self.status_color = ft.Colors.BLUE_900
+                self.leading_icon = ft.Icons.ALARM
+            else:
+                self.status_color = ft.Colors.RED_800
+                self.leading_icon = ft.Icons.SNOOZE_OUTLINED
         elif self.reminder.status == "done":
             self.status_color = ft.Colors.GREEN_900
-            self.leading_icon = ft.Icons.DONE
+            self.leading_icon = ft.Icons.AUTO_AWESOME_OUTLINED
         elif self.status_color == "expired":
             self.status_color = ft.Colors.RED_900
             self.leading_icon = ft.Icons.DANGEROUS_OUTLINED
@@ -25,8 +33,9 @@ class ReminderCard(ft.Card):
             self.status_color = ft.Colors.BLUE_900
             self.leading_icon = ft.Icons.ALARM
 
+        self.chip_status = self.reminder.status.capitalize() if self.reminder.is_snoozed == 0 else "Snoozed"
         self.pending_hint = ft.Chip(
-            label = ft.Text(self.reminder.status, width = 60, text_align=ft.TextAlign.CENTER),
+            label = ft.Text(self.chip_status, width = 60, text_align=ft.TextAlign.CENTER),
             label_style=ft.TextStyle(color=self.status_color, weight= ft.FontWeight.W_700)
         )
         self.up_title = self.reminder.title.title()
@@ -40,6 +49,18 @@ class ReminderCard(ft.Card):
             expand=True
         )
 
+        if self.is_snoozed:
+            self.time_display = ft.Text(
+                self.option + " · " + 'Snoozed to ' + self.reminder.next_trigger_time.strftime("%H:%M"),
+                size=13,
+                weight=ft.FontWeight.W_500
+            )
+        else:
+            self.time_display = ft.Text(
+                self.option + " · " + self.reminder.base_time.strftime("%H:%M"),
+                size=13,
+                weight=ft.FontWeight.W_500
+            )
         self.card_content = ft.ListTile(
             leading = ft.Icon(self.leading_icon, size = 30, color =self.status_color),
             title = self.title_row,
@@ -47,11 +68,7 @@ class ReminderCard(ft.Card):
                 controls = [
                     ft.Row(
                                 [
-                                    ft.Text(
-                                        self.option + " · " + self.reminder.base_time.strftime("%H:%M"),
-                                        size=13,
-                                        weight=ft.FontWeight.W_500
-                                    )
+                                    self.time_display
                                 ],
                                 spacing=6
                             ),
@@ -106,18 +123,10 @@ class ReminderCard(ft.Card):
             self.on_delete(self.reminder)
 
     def handle_edit(self, e):
-        if self._on_edit:
-            self._on_edit(self.reminder)
+        if self.on_edit:
+            self.on_edit(self.reminder)
 
     def on_hover(self, e):
         is_hovered = e.data == "true"
         self.actions.opacity = 1.0 if is_hovered else 0.0
         self.actions.update()
-
-    def _on_edit(self,reminder):
-        edit_field = EditField(
-            old_reminder=reminder,
-        )
-        self.page.overlay.append(edit_field.time_input)
-        self.page.open(edit_field)
-        self.page.update()

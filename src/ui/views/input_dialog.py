@@ -19,7 +19,7 @@ class InputField(ft.AlertDialog):
             on_click= self.show_time_picker,
             icon_size=20
         )
-
+        print(f'input dialog time: {datetime.datetime.now().time().strftime("%H:%M")}')
         self.time_display = ft.TextField(
             label="Time",
             value=datetime.datetime.now().time().strftime("%H:%M"),
@@ -134,7 +134,7 @@ class InputField(ft.AlertDialog):
                 self.title_textfield.value,
                 str(self.time_input.value), 
                 self.description_input.value,
-                self.day_picker.value, #option
+                self.day_picker.value, 
             )
 
         self.close(e)
@@ -152,3 +152,14 @@ class InputField(ft.AlertDialog):
     def close(self, e):
         self.open = False
         self.update()
+
+    def reset_form(self):
+        now = datetime.datetime.now().time()
+        now_str = now.strftime("%H:%M")
+        
+        self.time_input.value = now
+        self.time_display.value = now_str
+        
+        self.title_textfield.value = ""
+        self.description_input.value = ""
+        self.day_picker.value = "Today"

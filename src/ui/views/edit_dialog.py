@@ -11,8 +11,8 @@ class EditField(ft.AlertDialog):
         self.title_text = ft.Text("Edit reminder name", size = 12, color = ft.Colors.ON_SURFACE_VARIANT)
 
         self.title_textfield = ft.TextField(
-            value="Reminder title",
-            hint_text = self.old_reminder.title,
+            value=self.old_reminder.title,
+            label = "Rminder title",
             on_submit=self.handle_submit,
             autofocus=True,
         )
@@ -31,7 +31,7 @@ class EditField(ft.AlertDialog):
             on_focus=self.show_time_picker,
             on_submit=self.handle_submit,
         )
-
+       # print(self.old_reminder.base_time.strftime("%H:%M"))
         self.time_input = ft.TimePicker(
             value=self.old_reminder.base_time,
             error_invalid_text="Time out of range",
@@ -93,7 +93,7 @@ class EditField(ft.AlertDialog):
             tight=True,
             spacing=10,
             controls = [
-                self.title_text,
+                #self.title_text,
                 self.title_textfield,
                 self.time_row,
                 self.description_input,

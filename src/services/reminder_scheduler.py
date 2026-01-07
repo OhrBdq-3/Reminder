@@ -23,8 +23,6 @@ class ReminderScheduler:
 
     def _run(self):
         triggered = set()
-        
-        print(self.repo.list_all())
         while self.running:
             now = datetime.now()
             today = now.date()
@@ -38,14 +36,14 @@ class ReminderScheduler:
                     if next_trigger_time <= now and key not in triggered:
                         triggered.add(key)
                         self.on_trigger(r)
-                        self._after_triggered(r)
+                        #self._after_triggered(r)
                         print('triggered none')
 
                 elif repeat == "daily" and status == "pending":
                     if next_trigger_time <= now and key not in triggered:
                         triggered.add(key)
                         self.on_trigger(r)
-                        self._after_triggered(r)
+                        #self._after_triggered(r)
                         print('triggered daily')
 
                 elif repeat == "workdays" and status == "pending":
@@ -53,7 +51,7 @@ class ReminderScheduler:
                         if next_trigger_time <= now and key not in triggered:
                             triggered.add(key)
                             self.on_trigger(r)
-                            self._after_triggered(r)
+                            #self._after_triggered(r)
                             print('triggered workdays')
 
                 elif repeat == "weekend" and status == "pending":
@@ -61,7 +59,7 @@ class ReminderScheduler:
                         if next_trigger_time <= now and key not in triggered:
                             triggered.add(key)
                             self.on_trigger(r)
-                            self._after_triggered(r)
+                            #self._after_triggered(r)
                             print('triggered weekend')
             time.sleep(30)
 

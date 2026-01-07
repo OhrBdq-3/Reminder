@@ -31,3 +31,4 @@ class Reminder:
     status: ReminderStatus = ReminderStatus.PENDING
     option: OptionType  = OptionType.TODAY
     repeat: RepeatType = RepeatType.NONE
+    is_snoozed: int = 0
