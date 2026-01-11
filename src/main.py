@@ -8,9 +8,9 @@ from services.reminder_scheduler import ReminderScheduler
 from ui.managers.notification_manager import NotificationManager
 from services.reminder_process import create_reminder
 from ui.views.side_bar import SideBar
-from ui.managers.theme_manager import ThemeManager
 from ui.views.card_list import CardList
 from ui.managers.cardlist_manager import CardListManager
+from ui.managers.sidebar_manager import SidebarManager
 
 repo = ReminderRepository()
 
@@ -18,8 +18,11 @@ def main(page: ft.Page):
     page.title = "Desktop Assistant - Reminder Module"
     page.theme_mode = ft.ThemeMode.LIGHT
 
-    theme_manager = ThemeManager(page = page)
-    rail = SideBar(on_change_theme=theme_manager.change_theme)
+    
+    sidebar = SideBar()
+    sidebar_manager = SidebarManager(sidebar=sidebar, page = page)
+    sidebar.on_change_theme = sidebar_manager.change_theme
+    sidebar.on_nav_change = sidebar_manager.toggle_bar
     card_list_manager = CardListManager(repo = repo, page = page)
     card_list = CardList(page = page, manager=card_list_manager)
     
@@ -42,7 +45,7 @@ def main(page: ft.Page):
     
     main_row = ft.Row(
         [
-            rail,
+            sidebar,
             ft.VerticalDivider(width=1),
             card_list
         ],
