@@ -29,14 +29,3 @@ class CardListManager:
         reminder.repeat = updated.repeat
         reminder.status = "pending"
         self.repo.update(reminder)
-        #return updated
-        
-    # def open_edit_dialog(self, old_reminder):
-    #     edit_field = EditField(
-    #         old_reminder=old_reminder,
-    #         on_submit=lambda title, time, desc, opt:
-    #             self.update(old_reminder, title, time, desc, opt)
-    #     )
-    #     self.page.overlay.append(edit_field.time_input)
-    #     self.page.open(edit_field)
-    #     self.page.update()

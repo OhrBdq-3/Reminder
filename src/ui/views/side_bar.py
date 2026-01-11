@@ -54,13 +54,11 @@ class SideBar(ft.Container):
                 ft.IconButton(
                     icon=ft.Icons.MENU,
                     icon_size=20
-                    #on_click=self.toggle,
                 ),
                 ft.Container(expand=True),
                 ft.IconButton(
                     icon=ft.Icons.SEARCH,
                     icon_size=20
-                    #on_click=self.toggle,
                 ),
             ],
         )

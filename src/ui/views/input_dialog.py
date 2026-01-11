@@ -2,8 +2,9 @@ import flet as ft
 import datetime
 
 class InputField(ft.AlertDialog):
-    def __init__(self, on_submit=None):
+    def __init__(self, page, on_submit=None):
         super().__init__()
+        self.page = page
         self.on_submit = on_submit
         self.title = ft.Text("New Reminder", weight=ft.FontWeight.BOLD, size = 18)
 
@@ -19,7 +20,7 @@ class InputField(ft.AlertDialog):
             on_click= self.show_time_picker,
             icon_size=20
         )
-        print(f'input dialog time: {datetime.datetime.now().time().strftime("%H:%M")}')
+
         self.time_display = ft.TextField(
             label="Time",
             value=datetime.datetime.now().time().strftime("%H:%M"),
@@ -163,3 +164,8 @@ class InputField(ft.AlertDialog):
         self.title_textfield.value = ""
         self.description_input.value = ""
         self.day_picker.value = "Today"
+        
+    def open_dialog(self, e):
+        self.reset_form()
+        self.page.open(self)
+        self.page.update()

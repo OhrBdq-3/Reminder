@@ -32,7 +32,10 @@ class ReminderRepository:
 
     def add(self, reminder: Reminder) -> Reminder:
         self.conn.execute(
-            "INSERT INTO reminders (id, title, base_time, next_trigger_time, description, status, option, repeat, is_snoozed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            """INSERT INTO reminders 
+                (id, title, base_time, next_trigger_time, description, status, option, repeat, is_snoozed)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
             (
                 str(reminder.id),
                 reminder.title, 
@@ -71,6 +74,16 @@ class ReminderRepository:
 
     def update(self, reminder: Reminder):
         self.conn.execute(
-            "update reminders set title = ?, base_time = ?, next_trigger_time = ?, description = ?, status = ?, option = ?, repeat = ?, is_snoozed = ?  where id = ?"
+            """update reminders set 
+                title = ?, 
+                base_time = ?, 
+                next_trigger_time = ?, 
+                description = ?, 
+                status = ?, 
+                option = ?, 
+                repeat = ?, 
+                is_snoozed = ?  
+                where id = ?
+            """
         ,(reminder.title, reminder.base_time.strftime("%H:%M:%S"), reminder.next_trigger_time.strftime("%Y-%m-%d %H:%M:%S"), reminder.description, reminder.status, reminder.option, reminder.repeat, reminder.is_snoozed, reminder.id))
         self.conn.commit()

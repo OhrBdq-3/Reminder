@@ -36,7 +36,7 @@ class CardList(ft.ListView):
     def open_edit(self, old_reminder):
         def handle_submit(title, time, desc, opt):
             self.manager.update(old_reminder, title, time, desc, opt)
-            self.reload()          # 👈 刷新在这里
+            self.reload()         
             self.page.update()
 
         edit_field = EditField(
@@ -63,16 +63,6 @@ class CardList(ft.ListView):
             on_edit=lambda e, rem = new_data: self.open_edit(rem),
         )
         self.controls.append(new_card)
-        #print(new_data)
         self.manager.repo.add(new_data)
         self.page.update()
         
-    # def open_edit_dialog(self, old_reminder):
-    #     edit_field = EditField(
-    #         old_reminder=old_reminder,
-    #         on_submit=lambda title, time, desc, opt:
-    #             self.update(old_reminder, title, time, desc, opt)
-    #     )
-    #     self.page.overlay.append(edit_field.time_input)
-    #     self.page.open(edit_field)
-    #     self.page.update()

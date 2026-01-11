@@ -93,7 +93,6 @@ class EditField(ft.AlertDialog):
             tight=True,
             spacing=10,
             controls = [
-                #self.title_text,
                 self.title_textfield,
                 self.time_row,
                 self.description_input,

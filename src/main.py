@@ -17,118 +17,27 @@ repo = ReminderRepository()
 def main(page: ft.Page):
     page.title = "Desktop Assistant - Reminder Module"
     page.theme_mode = ft.ThemeMode.LIGHT
-    # cards = ft.ListView(
-    #     spacing=10,
-    #     padding=10,
-    #     auto_scroll=True,
-    #     expand=True
-    # )
+
     theme_manager = ThemeManager(page = page)
     rail = SideBar(on_change_theme=theme_manager.change_theme)
     card_list_manager = CardListManager(repo = repo, page = page)
     card_list = CardList(page = page, manager=card_list_manager)
     
-    # def load_reminders():
-    #     cards.controls.clear()
-    #     reminders = repo.list_all()
-    #     for rem in reminders:
-    #         card = ReminderCard(
-    #             reminder = rem,
-    #             on_delete=lambda e, rem = rem: delete_reminder(rem),
-    #             on_edit=lambda e, rem = rem: open_edit_dialog(rem),
-    #         )
-    #         cards.controls.append(card)
-    #     page.update()
-
-    #load_reminders()
     card_list.reload()
     
     notification_manager = NotificationManager(page = page, repo = repo, on_refresh=card_list.reload)
-    
-    def on_reminder_triggered(reminder):
-        notification_manager.show(reminder)
-        print(f"Reminder: {reminder.title} @ {reminder.base_time}")
-        
-    
     scheduler = ReminderScheduler(
         repo = repo,
-        on_trigger= on_reminder_triggered
+        on_trigger= notification_manager.show
     )
     scheduler.start()
 
-    # def delete_reminder(reminder):
-    #     repo.delete(reminder.id)
-    #     cards.controls[:] = [
-    #         c for c in cards.controls if c.reminder.id != reminder.id
-    #     ]
-    #     page.update()
-
-    # def edit_reminder(reminder, new_title, new_base_time, new_description, new_option):
-    #     reminder.title = new_title
-    #     reminder.base_time = new_base_time
-    #     reminder.description = new_description
-    #     reminder.option = new_option
-
-    #     updated = create_reminder(
-    #         id=reminder.id,
-    #         title=new_title,
-    #         base_time=new_base_time,
-    #         description=new_description,
-    #         option=new_option
-    #     )
-
-    #     reminder.next_trigger_time = updated.next_trigger_time
-    #     reminder.base_time = updated.base_time
-    #     reminder.repeat = updated.repeat
-    #     reminder.status = "pending"
-    #     repo.update(reminder)
-    #     load_reminders()
-    
-    # def open_edit_dialog(old_reminder):
-    #     print('here')
-    #     edit_field = EditField(
-    #         old_reminder=old_reminder,
-    #         on_submit=lambda title, time, desc, opt:
-    #             edit_reminder(old_reminder, title, time, desc, opt)
-    #     )
-    #     page.overlay.append(edit_field.time_input)
-    #     page.open(edit_field)
-    #     page.update()
-        
-
-    # def add_card(reminder_name, reminder_time, description, option):
-    #     new_data = create_reminder(
-    #             id=str(uuid4()),
-    #             title=reminder_name,
-    #             base_time=reminder_time,
-    #             description=description,
-    #             option=option
-    #         )
-
-    #     new_card = ReminderCard(
-    #         reminder = new_data,
-    #         on_delete=lambda e, rem = new_data: card_list.handle_delete(rem),
-    #         on_edit=lambda e, rem = new_data: card_list.open_edit(rem),
-    #     )
-    #     card_list.controls.append(new_card)
-    #     print(new_data)
-    #     repo.add(new_data)
-    #     page.update()
-
-
-    input_field = InputField(on_submit=card_list.add_card)
-
+    input_field = InputField(page = page, on_submit=card_list.add_card)
     page.overlay.append(input_field.time_input)
-
-    def open_input_dialog(e):
-        input_field.reset_form()
-        page.open(input_field)
-        page.update()
-
     add_button = ft.TextButton(
         text = "Add Reminder",
         icon=ft.Icons.ADD,
-        on_click=open_input_dialog
+        on_click=input_field.open_dialog
     )
     
     main_row = ft.Row(
