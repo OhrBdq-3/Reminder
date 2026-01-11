@@ -24,10 +24,12 @@ class ReminderScheduler:
     def _run(self):
         triggered = set()
         while self.running:
+            print(self.repo.list_all())
+            print(f'triggered set:{triggered}')
             now = datetime.now()
             today = now.date()
             for r in self.repo.list_all():
-                key = (r.id, today)
+                key = (r.id, r.next_trigger_time)
                 repeat = r.repeat
                 status = r.status
                 next_trigger_time = r.next_trigger_time
