@@ -101,4 +101,4 @@ class SideBar(ft.Container):
 
     def handle_select_dest(self, e):
         if self.on_select_dest:
-            self.on_select_dest()
+            self.on_select_dest(e)

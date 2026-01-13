@@ -1,5 +1,4 @@
 import flet as ft
-from ui.views.edit_dialog import EditField
 
 class ReminderCard(ft.Card):
     def __init__(self, reminder,

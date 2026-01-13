@@ -2,10 +2,10 @@ from datetime import datetime, date, timedelta
 from models.reminder import Reminder
 
 def is_workday(d: date):
-    return d.weekday() < 5   # 0-4
+    return d.weekday() < 5   
 
 def is_weekend(d: date):
-    return d.weekday() >= 5  # 5,6
+    return d.weekday() >= 5  
 
 def create_reminder(id: str, 
                     title: str, 

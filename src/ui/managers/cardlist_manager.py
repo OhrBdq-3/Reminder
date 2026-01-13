@@ -1,5 +1,4 @@
 from services.reminder_process import create_reminder
-from ui.views.edit_dialog import EditField
 
 class CardListManager:
     def __init__(self, repo, page, on_refresh = None):

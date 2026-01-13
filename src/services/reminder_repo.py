@@ -1,5 +1,4 @@
 import sqlite3
-from pathlib import Path
 from models.reminder import Reminder
 import os
 from datetime import datetime

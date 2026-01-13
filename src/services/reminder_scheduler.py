@@ -1,7 +1,6 @@
 import threading
 import time
-from datetime import datetime, timedelta
-from services.reminder_repo import ReminderRepository
+from datetime import datetime
 
 class ReminderScheduler:
     def __init__(self, repo, on_trigger):

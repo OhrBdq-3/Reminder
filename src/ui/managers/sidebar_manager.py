@@ -33,9 +33,9 @@ class SidebarManager:
         
         self.sidebar.update()
 
-    def select_dest(self):
-        index = self.sidebar.nav.selected_index
-        status = DEST_MAP[index]
+    def select_dest(self, e):
+        index = e.control.selected_index
+        status = DEST_MAP.get(index)
         if status == 'none':
             self.card_list.reload()
             self.card_list.update()
