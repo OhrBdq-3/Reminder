@@ -68,6 +68,23 @@ class ReminderRepository:
             for row in rows
         ]
 
+    def list_by_status(self, status):
+        rows = self.conn.execute("SELECT * FROM reminders where status = ?", (status, )).fetchall()
+        return [
+            Reminder(
+                id=row["id"],
+                title=row["title"],
+                base_time=datetime.strptime(row["base_time"],"%H:%M:%S"),
+                next_trigger_time=datetime.strptime(row["next_trigger_time"],"%Y-%m-%d %H:%M:%S"),
+                description=row["description"],
+                status = row["status"],
+                option = row["option"],
+                repeat = row["repeat"],
+                is_snoozed=row["is_snoozed"]
+            )
+            for row in rows
+        ]
+    
     def delete(self, reminder_id: int):
         self.conn.execute("DELETE FROM reminders WHERE id = ?", (reminder_id,))
         self.conn.commit()

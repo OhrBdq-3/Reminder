@@ -31,7 +31,7 @@ class EditField(ft.AlertDialog):
             on_focus=self.show_time_picker,
             on_submit=self.handle_submit,
         )
-       # print(self.old_reminder.base_time.strftime("%H:%M"))
+
         self.time_input = ft.TimePicker(
             value=self.old_reminder.base_time,
             error_invalid_text="Time out of range",

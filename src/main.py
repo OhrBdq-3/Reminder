@@ -23,8 +23,12 @@ def main(page: ft.Page):
     sidebar_manager = SidebarManager(sidebar=sidebar, page = page)
     sidebar.on_change_theme = sidebar_manager.change_theme
     sidebar.on_nav_change = sidebar_manager.toggle_bar
+    sidebar.on_select_dest = sidebar_manager.select_dest
+
     card_list_manager = CardListManager(repo = repo, page = page)
-    card_list = CardList(page = page, manager=card_list_manager)
+    card_list = CardList(page = page, manager=card_list_manager, sidebar=sidebar)
+    sidebar_manager.card_list = card_list
+    
     
     card_list.reload()
     

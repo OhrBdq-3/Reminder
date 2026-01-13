@@ -2,7 +2,7 @@ import flet as ft
 
 
 class SideBar(ft.Container):
-    def __init__(self, on_change_theme = None, on_nav_change = None, on_settings_click = None, on_about_click = None):
+    def __init__(self, on_change_theme = None, on_nav_change = None, on_settings_click = None, on_about_click = None, on_select_dest = None):
         super().__init__()
 
         self.width = 220
@@ -10,17 +10,15 @@ class SideBar(ft.Container):
         self.on_change_theme = on_change_theme
         self.on_nav_change = on_nav_change
         self.on_settings_click = on_settings_click
+        self.on_select_dest = on_select_dest
         self.on_about_click = on_about_click
         self.animate = ft.Animation(260, ft.AnimationCurve.EASE_IN_OUT)
         
         self.nav = ft.NavigationRail(
-            selected_index=1,
-            #label_type=ft.NavigationRailLabelType.ALL,
+            selected_index=0,
             group_alignment=-0.9,
             expand = True,
-            #min_width=100,
             extended=True,
-            #min_extended_width=200,
             destinations=[
                 ft.NavigationRailDestination(
                     icon=ft.Icons.LIST_ALT, label="All"
@@ -29,13 +27,10 @@ class SideBar(ft.Container):
                     icon=ft.Icons.SCHEDULE, label="Upcoming"
                 ),
                 ft.NavigationRailDestination(
-                    icon=ft.Icons.SNOOZE, label="Snoozed"
-                ),
-                ft.NavigationRailDestination(
                     icon=ft.Icons.CHECK_CIRCLE_OUTLINE, label="Completed"
                 ),
             ],
-            on_change=lambda e: print("Selected destination:", e.control.selected_index),
+            on_change=self.handle_select_dest,
         )
 
         self.setting_btn = ft.IconButton(
@@ -103,3 +98,7 @@ class SideBar(ft.Container):
     def handle_click_about(self, e):
         if self.on_about_click:
             self.on_about_click()
+
+    def handle_select_dest(self, e):
+        if self.on_select_dest:
+            self.on_select_dest()

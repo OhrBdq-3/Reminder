@@ -56,27 +56,3 @@ class ReminderScheduler:
                             self.on_trigger(r)
 
             time.sleep(30)
-
-    def _after_triggered(self,r):
-        if r.repeat == "none":
-            r.status = "done"
-
-        elif r.repeat == "daily":
-            r.next_trigger_time += timedelta(days=1)
-        
-        elif r.repeat == "workdays":
-            d = r.next_trigger_time
-            while True:
-                d += timedelta(days = 1)
-                if d.weekday() < 5:
-                    break
-            r.next_trigger_time = d
-        
-        elif r.repeat == "weekend":
-            d = r.next_trigger_time
-            while True:
-                d += timedelta(days = 1)
-                if d.weekday() >= 5:
-                    break
-            r.next_trigger_time = d
-        self.repo.update(r)

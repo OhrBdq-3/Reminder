@@ -47,7 +47,6 @@ class NotificationManager:
         self._remove(reminder)
         self.on_refresh()
 
-        print(f"Done: {reminder.title}")
 
     def _on_snooze(self, reminder):
         reminder.next_trigger_time = datetime.now() + timedelta(minutes=10)
@@ -57,7 +56,6 @@ class NotificationManager:
         self._remove(reminder)
         self.on_refresh()
 
-        print(f"Snoozed: {reminder.title}")
 
     def _remove(self, reminder):
         for c in list(self.toast_column.controls):

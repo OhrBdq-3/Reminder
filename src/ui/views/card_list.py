@@ -5,7 +5,7 @@ from services.reminder_process import create_reminder
 from uuid import uuid4
 
 class CardList(ft.ListView):
-    def __init__(self, page: ft.Page, manager):
+    def __init__(self, page: ft.Page, manager, sidebar ):
         super().__init__()
         self.spacing=10
         self.padding=10
@@ -14,10 +14,17 @@ class CardList(ft.ListView):
         
         self.page = page
         self.manager = manager
-        
+        self.sidebar = sidebar
+
     def reload(self):
         self.controls.clear()
         for d in self.manager.repo.list_all():
+            self.controls.append(self._build_card(d))
+        self.page.update()
+
+    def reload_by_status(self, status):
+        self.controls.clear()
+        for d in self.manager.repo.list_by_status(status):
             self.controls.append(self._build_card(d))
         self.page.update()
         
@@ -62,6 +69,8 @@ class CardList(ft.ListView):
             on_delete=lambda e, rem = new_data: self.handle_delete(rem),
             on_edit=lambda e, rem = new_data: self.open_edit(rem),
         )
+        self.reload_by_status('pending')
+        self.sidebar.nav.selected_index = 1
         self.controls.append(new_card)
         self.manager.repo.add(new_data)
         self.page.update()

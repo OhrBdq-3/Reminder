@@ -1,9 +1,15 @@
 import flet as ft
 
+DEST_MAP = {
+    0:'none',
+    1:'pending',
+    2:'done'
+}
 class SidebarManager:
-    def __init__(self, sidebar, page):
+    def __init__(self, sidebar, page, card_list = None):
         self.sidebar = sidebar
         self.page = page
+        self.card_list = card_list
         self.collapsed = False
 
     def change_theme(self):
@@ -26,3 +32,13 @@ class SidebarManager:
         )
         
         self.sidebar.update()
+
+    def select_dest(self):
+        index = self.sidebar.nav.selected_index
+        status = DEST_MAP[index]
+        if status == 'none':
+            self.card_list.reload()
+            self.card_list.update()
+        else:
+            self.card_list.reload_by_status(status)
+            self.card_list.update()
