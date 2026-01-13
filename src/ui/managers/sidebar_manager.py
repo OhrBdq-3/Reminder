@@ -5,6 +5,7 @@ DEST_MAP = {
     1:'pending',
     2:'done'
 }
+
 class SidebarManager:
     def __init__(self, sidebar, page, card_list = None):
         self.sidebar = sidebar

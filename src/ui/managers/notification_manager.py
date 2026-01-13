@@ -3,7 +3,10 @@ import flet as ft
 from datetime import datetime, timedelta
 
 class NotificationManager:
-    def __init__(self, page, repo, on_refresh):
+    def __init__(self, 
+                 page, 
+                 repo, 
+                 on_refresh):
         self.page = page
         self.repo = repo
         self.on_refresh = on_refresh

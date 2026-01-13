@@ -1,7 +1,10 @@
 import flet as ft
 
 class ReminderToast(ft.Container):
-    def __init__(self, reminder, on_done = None, on_snooze = None):
+    def __init__(self, 
+                 reminder, 
+                 on_done = None, 
+                 on_snooze = None):
         super().__init__()
         self.reminder = reminder
         self.on_done = on_done

@@ -7,6 +7,7 @@ from ui.views.side_bar import SideBar
 from ui.views.card_list import CardList
 from ui.managers.cardlist_manager import CardListManager
 from ui.managers.sidebar_manager import SidebarManager
+from ui.views.setting_drawer import SettingDrawer
 
 repo = ReminderRepository()
 
@@ -14,8 +15,9 @@ def main(page: ft.Page):
     page.title = "Desktop Assistant - Reminder Module"
     page.theme_mode = ft.ThemeMode.LIGHT
 
-    
-    sidebar = SideBar()
+
+    setting_sheet = SettingDrawer(page = page)
+    sidebar = SideBar(setting_sheet=setting_sheet)
     sidebar_manager = SidebarManager(sidebar=sidebar, page = page)
     sidebar.on_change_theme = sidebar_manager.change_theme
     sidebar.on_nav_change = sidebar_manager.toggle_bar
@@ -36,6 +38,8 @@ def main(page: ft.Page):
     scheduler.start()
 
     input_field = InputField(page = page, on_submit=card_list.add_card)
+
+    
     page.overlay.append(input_field.time_input)
     add_button = ft.TextButton(
         text = "Add Reminder",

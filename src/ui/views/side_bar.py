@@ -2,11 +2,18 @@ import flet as ft
 
 
 class SideBar(ft.Container):
-    def __init__(self, on_change_theme = None, on_nav_change = None, on_settings_click = None, on_about_click = None, on_select_dest = None):
+    def __init__(self, 
+                 setting_sheet = None,
+                 on_change_theme = None, 
+                 on_nav_change = None, 
+                 on_settings_click = None, 
+                 on_about_click = None, 
+                 on_select_dest = None):
         super().__init__()
 
         self.width = 220
         self.padding = ft.padding.symmetric(vertical=12)
+        self.setting_sheet = setting_sheet
         self.on_change_theme = on_change_theme
         self.on_nav_change = on_nav_change
         self.on_settings_click = on_settings_click
@@ -36,7 +43,8 @@ class SideBar(ft.Container):
         self.setting_btn = ft.IconButton(
             icon=ft.Icons.SETTINGS_ROUNDED,
             icon_size = 15,
-            tooltip="Setting"
+            tooltip="Setting",
+            on_click = self.setting_sheet.open_drawer
         )
         self.about_btn = ft.IconButton(
             icon = ft.Icons.QUESTION_MARK_ROUNDED,
