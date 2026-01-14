@@ -4,6 +4,13 @@ from ui.views.edit_dialog import EditField
 from services.reminder_process import create_reminder
 from uuid import uuid4
 
+
+DEST_MAP = {
+    0:'none',
+    1:'pending',
+    2:'done'
+}
+
 class CardList(ft.ListView):
     def __init__(self, page: ft.Page, manager, sidebar ):
         super().__init__()
@@ -36,8 +43,9 @@ class CardList(ft.ListView):
         )
 
     def handle_delete(self, reminder):
+        page_index = self.sidebar.nav.selected_index
         self.manager.delete(reminder)
-        self.reload()
+        self.reload_by_status(DEST_MAP[page_index])
         self.page.update()
         
     def open_edit(self, old_reminder):
