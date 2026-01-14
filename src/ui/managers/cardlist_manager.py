@@ -28,3 +28,4 @@ class CardListManager:
         reminder.repeat = updated.repeat
         reminder.status = "pending"
         self.repo.update(reminder)
+        self.on_refresh("pending")

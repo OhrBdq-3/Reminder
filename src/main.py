@@ -1,6 +1,7 @@
 import flet as ft
 from services.reminder_repo import ReminderRepository
 from ui.views.input_dialog import InputField
+from ui.views.ai_dialog import AIDialog
 from services.reminder_scheduler import ReminderScheduler
 from ui.managers.notification_manager import NotificationManager
 from ui.views.side_bar import SideBar
@@ -8,11 +9,15 @@ from ui.views.card_list import CardList
 from ui.managers.cardlist_manager import CardListManager
 from ui.managers.sidebar_manager import SidebarManager
 from ui.views.setting_drawer import SettingDrawer
+from engine.model_engine import ChatEngine
+from utils.helper import load_setting
 
 repo = ReminderRepository()
 
+    
+
 def main(page: ft.Page):
-    page.title = "Desktop Assistant - Reminder Module"
+    page.title = "Reminder"
     page.theme_mode = ft.ThemeMode.LIGHT
 
 
@@ -26,6 +31,7 @@ def main(page: ft.Page):
     card_list_manager = CardListManager(repo = repo, page = page)
     card_list = CardList(page = page, manager=card_list_manager, sidebar=sidebar)
     sidebar_manager.card_list = card_list
+    card_list_manager.on_refresh = card_list.reload_by_status
     
     
     card_list.reload_by_status('pending')
@@ -36,15 +42,25 @@ def main(page: ft.Page):
         on_trigger= notification_manager.show
     )
     scheduler.start()
+    ai_engine = ChatEngine()
 
     input_field = InputField(page = page, on_submit=card_list.add_card)
-
+    ai_input_field = AIDialog(page = page, on_parsed=ai_engine.get_json_response, on_submit=card_list.add_card, on_update=card_list_manager.update)
     
     page.overlay.append(input_field.time_input)
+
+
+    def on_add_click(e):
+        setting = load_setting()
+        if setting.get("enable_ai", False):
+            ai_input_field.open_dialog(e)
+        else:
+            input_field.open_dialog(e)
+
     add_button = ft.TextButton(
         text = "Add Reminder",
         icon=ft.Icons.ADD,
-        on_click=input_field.open_dialog
+        on_click=on_add_click
     )
     
     main_row = ft.Row(

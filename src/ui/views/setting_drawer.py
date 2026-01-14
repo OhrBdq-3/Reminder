@@ -1,9 +1,8 @@
 import flet as ft
-import os
-import json
+from utils.helper import load_setting, write_setting
 
 SNOOZE_OPTIONS = [5, 10, 15, 20, 30, 45, 60]
-SETTING_PATH = os.path.join(os.getcwd(),'src','config','setting.json')
+
 
 class SettingDrawer(ft.NavigationDrawer):
     def __init__(self, page: ft.Page, on_save=None):
@@ -12,7 +11,7 @@ class SettingDrawer(ft.NavigationDrawer):
         
         self.page = page
         self.on_save = on_save
-        self.setting = self._load_setting()
+        self.setting = load_setting()
         self.selected_snooze = self.setting.get("snooze_time",SNOOZE_OPTIONS[1])
 
         self.snooze_picker = ft.Dropdown(
@@ -65,6 +64,15 @@ class SettingDrawer(ft.NavigationDrawer):
             ],
         )
 
+        self.tone_dropdown = ft.Dropdown(
+            label = "Tone",
+            value = self.setting.get("ai_setting").get("tone","default"),
+            options = [
+                ft.dropdown.Option("default"),
+                ft.dropdown.Option("creative"),
+            ]
+        )
+
         self.gpt_setting_container = ft.Container(
             visible=self.setting.get("enable_ai",False),
             content=ft.Column(
@@ -74,6 +82,7 @@ class SettingDrawer(ft.NavigationDrawer):
                     self.base_url,
                     self.api_key,
                     self.model_dropdown,
+                    self.tone_dropdown
                 ],
             ),
         )
@@ -99,7 +108,6 @@ class SettingDrawer(ft.NavigationDrawer):
                     spacing=30,
                     controls=[
                         self.snooze_section,
-                        #ft.Divider(),
                         self.enable_gpt,
                         self.gpt_setting_container,
                     ],
@@ -151,17 +159,12 @@ class SettingDrawer(ft.NavigationDrawer):
                 "api_base_url":self.base_url.value,
                 "api_key":self.api_key.value,
                 "current_model":self.model_dropdown.value,
+                "tone":self.tone_dropdown.value,
             }
         }
 
         
-        with open(SETTING_PATH,'w',encoding='utf-8') as f:
-            json.dump(config, f,indent=2)
-            print("Saved config:", config)
-
-        if self.on_save:
-            self.on_save(config)
-
+        write_setting(config)
         self.close_drawer()
 
     def open_drawer(self, e=None):
@@ -172,14 +175,3 @@ class SettingDrawer(ft.NavigationDrawer):
     def close_drawer(self, e=None):
         self.open = False
         self.page.update()
-
-    def _load_setting(self):
-        if not os.path.exists(SETTING_PATH):
-            return {}
-
-        try:
-            with open(SETTING_PATH, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except Exception as e:
-            print("Failed to load setting:", e)
-            return {}

@@ -1,0 +1,68 @@
+from config.reminder_schema import REMINDER_SCHEMA  
+from config.tone_prompt import TONE_MAP
+from utils.helper import load_setting
+import json
+
+class ChatEngine:
+    def __init__(self,):
+        self.client = None
+        self.model_info = None
+
+    def _ensure_initialized(self):
+        if self.client is None:
+            from openai import OpenAI 
+            self.model_info = self._load_config()
+            self.client = OpenAI(
+                api_key=self.model_info["api_key"],
+            )
+
+    def _load_config(self) -> dict:
+        config = load_setting().get("ai_setting")
+        enable_ai = config.get("enable_ai")
+        if enable_ai:
+            required = ["api_base_url", "current_model", "api_key"]
+            for k in required:
+                if k not in config:
+                    raise ValueError(f"Missing config field: {k}")
+        return config
+
+    def get_response(self, content: str):
+        responses = self.client.chat.completions.create(
+            model=self.model_info["current_model"],
+            messages=[{"role": "user", "content": content}],
+            stream=True,
+        )
+        for chunk in responses:
+                if chunk.choices[0].delta.content:
+                    for char in chunk.choices[0].delta.content:
+                        yield char
+
+    def get_json_response(self, content:str, tone: str = 'default'):
+        self._ensure_initialized() 
+        response = self.client.chat.completions.parse(
+            model=self.model_info["current_model"],
+            messages=[
+                {
+                    "role": "system",
+                    "content": TONE_MAP.get(tone, "default")
+                },
+                {
+                    "role": "user",
+                    "content": content
+                }
+            ],
+            response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "reminder",
+                    "schema": REMINDER_SCHEMA
+                }
+            }
+        )
+        try:
+            parsed_result = json.loads(response.choices[0].message.content)
+            print(parsed_result)
+            return parsed_result
+        except:
+            raise Exception("LLM failed to parse json")
+            

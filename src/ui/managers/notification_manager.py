@@ -3,6 +3,7 @@ import flet as ft
 from datetime import datetime, timedelta
 import os
 import json
+from utils.helper import load_setting
 
 SETTING_PATH = os.path.join(os.getcwd(),'src','config','setting.json')
 
@@ -61,7 +62,7 @@ class NotificationManager:
 
 
     def _on_snooze(self, reminder):
-        setting = self._load_setting()
+        setting = load_setting()
         snooze_time = setting.get("snooze_time", 10)
         reminder.next_trigger_time = datetime.now() + timedelta(minutes=snooze_time)
         reminder.is_snoozed = 1
@@ -103,13 +104,3 @@ class NotificationManager:
             reminder.next_trigger_time = d
         self.repo.update(reminder)
 
-    def _load_setting(self):
-        if not os.path.exists(SETTING_PATH):
-            return {}
-
-        try:
-            with open(SETTING_PATH, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except Exception as e:
-            print("Failed to load setting:", e)
-            return {}

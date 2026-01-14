@@ -74,4 +74,4 @@ class CardList(ft.ListView):
         self.controls.append(new_card)
         self.manager.repo.add(new_data)
         self.page.update()
-        
+        return new_data
