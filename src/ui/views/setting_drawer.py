@@ -1,7 +1,9 @@
 import flet as ft
+import os
+import json
 
 SNOOZE_OPTIONS = [5, 10, 15, 20, 30, 45, 60]
-
+SETTING_PATH = os.path.join(os.getcwd(),'src','config','setting.json')
 
 class SettingDrawer(ft.NavigationDrawer):
     def __init__(self, page: ft.Page, on_save=None):
@@ -10,7 +12,8 @@ class SettingDrawer(ft.NavigationDrawer):
         
         self.page = page
         self.on_save = on_save
-        self.selected_snooze = SNOOZE_OPTIONS[1] 
+        self.setting = self._load_setting()
+        self.selected_snooze = self.setting.get("snooze_time",SNOOZE_OPTIONS[1])
 
         self.snooze_picker = ft.Dropdown(
             value=str(self.selected_snooze),
@@ -28,7 +31,6 @@ class SettingDrawer(ft.NavigationDrawer):
                 ft.Container(
                     padding=ft.padding.symmetric(horizontal=12, vertical=6),
                     border_radius=10,
-                    #border=ft.border.all(1, ft.Colors.OUTLINE),
                     content=self.snooze_picker,
                 ),
             ],
@@ -37,24 +39,25 @@ class SettingDrawer(ft.NavigationDrawer):
 
         self.enable_gpt = ft.Switch(
             label="Enable AI",
-            value=False,
+            value=self.setting.get("enable_ai",False),
             on_change=self.toggle_gpt_settings,
         )
 
         self.base_url = ft.TextField(
             label="API Base URL",
-            value="https://api.openai.com/v1",
+            value=self.setting.get("ai_setting").get("api_base_url","https://api.openai.com/v1"),
         )
 
         self.api_key = ft.TextField(
             label="API Key",
             password=True,
             can_reveal_password=True,
+            value = self.setting.get("ai_setting").get("api_key",""),
         )
 
         self.model_dropdown = ft.Dropdown(
             label="Current Model",
-            value="gpt-4o",
+            value=self.setting.get("ai_setting").get("current_model","gpt-4o"),
             options=[
                 ft.dropdown.Option("gpt-4o"),
                 ft.dropdown.Option("claude-3-5-sonnet"),
@@ -63,7 +66,7 @@ class SettingDrawer(ft.NavigationDrawer):
         )
 
         self.gpt_setting_container = ft.Container(
-            visible=False,
+            visible=self.setting.get("enable_ai",False),
             content=ft.Column(
                 spacing=15,
                 controls=[
@@ -133,7 +136,6 @@ class SettingDrawer(ft.NavigationDrawer):
         )
 
     def on_snooze_change(self, e):
-        # e.data 是选中的 value，例如 "10"
         self.selected_snooze = int(e.data)
 
     def toggle_gpt_settings(self, e):
@@ -141,15 +143,21 @@ class SettingDrawer(ft.NavigationDrawer):
         self.page.update()
 
     def handle_save(self, e):
+        config = self.setting.copy()
         config = {
-            "snooze": self.selected_snooze,
-            "gpt_enabled": self.enable_gpt.value,
-            "url": self.base_url.value,
-            "key": self.api_key.value,
-            "model": self.model_dropdown.value,
+            "snooze_time":self.selected_snooze,
+            "enable_ai":self.enable_gpt.value,
+            "ai_setting":{
+                "api_base_url":self.base_url.value,
+                "api_key":self.api_key.value,
+                "current_model":self.model_dropdown.value,
+            }
         }
 
-        print("Saved config:", config)
+        
+        with open(SETTING_PATH,'w',encoding='utf-8') as f:
+            json.dump(config, f,indent=2)
+            print("Saved config:", config)
 
         if self.on_save:
             self.on_save(config)
@@ -164,3 +172,14 @@ class SettingDrawer(ft.NavigationDrawer):
     def close_drawer(self, e=None):
         self.open = False
         self.page.update()
+
+    def _load_setting(self):
+        if not os.path.exists(SETTING_PATH):
+            return {}
+
+        try:
+            with open(SETTING_PATH, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print("Failed to load setting:", e)
+            return {}

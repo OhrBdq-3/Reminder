@@ -28,9 +28,9 @@ def main(page: ft.Page):
     sidebar_manager.card_list = card_list
     
     
-    card_list.reload()
+    card_list.reload_by_status('pending')
     
-    notification_manager = NotificationManager(page = page, repo = repo, on_refresh=card_list.reload)
+    notification_manager = NotificationManager(page = page, repo = repo, sidebar=sidebar, on_refresh=card_list.reload_by_status)
     scheduler = ReminderScheduler(
         repo = repo,
         on_trigger= notification_manager.show

@@ -1,14 +1,22 @@
 from ui.views.reminder_toast import ReminderToast
 import flet as ft
 from datetime import datetime, timedelta
+import os
+import json
+
+SETTING_PATH = os.path.join(os.getcwd(),'src','config','setting.json')
+
 
 class NotificationManager:
     def __init__(self, 
                  page, 
                  repo, 
-                 on_refresh):
+                 sidebar,
+                 on_refresh,
+                 ):
         self.page = page
         self.repo = repo
+        self.sidebar = sidebar
         self.on_refresh = on_refresh
         self.toast_column = ft.Column(
             spacing=10,
@@ -48,16 +56,20 @@ class NotificationManager:
         reminder.is_snoozed = 0
         self.repo.update(reminder)
         self._remove(reminder)
-        self.on_refresh()
+        self.sidebar.nav.selected_index = 2
+        self.on_refresh('done')
 
 
     def _on_snooze(self, reminder):
-        reminder.next_trigger_time = datetime.now() + timedelta(minutes=10)
+        setting = self._load_setting()
+        snooze_time = setting.get("snooze_time", 10)
+        reminder.next_trigger_time = datetime.now() + timedelta(minutes=snooze_time)
         reminder.is_snoozed = 1
         reminder.status = "pending"
         self.repo.update(reminder)
         self._remove(reminder)
-        self.on_refresh()
+        self.sidebar.nav.selected_index = 1
+        self.on_refresh("pending")
 
 
     def _remove(self, reminder):
@@ -90,3 +102,14 @@ class NotificationManager:
                     break
             reminder.next_trigger_time = d
         self.repo.update(reminder)
+
+    def _load_setting(self):
+        if not os.path.exists(SETTING_PATH):
+            return {}
+
+        try:
+            with open(SETTING_PATH, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print("Failed to load setting:", e)
+            return {}

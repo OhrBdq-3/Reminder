@@ -22,7 +22,7 @@ class SideBar(ft.Container):
         self.animate = ft.Animation(260, ft.AnimationCurve.EASE_IN_OUT)
         
         self.nav = ft.NavigationRail(
-            selected_index=0,
+            selected_index=1,
             group_alignment=-0.9,
             expand = True,
             extended=True,

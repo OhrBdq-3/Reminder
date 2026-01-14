@@ -54,4 +54,4 @@ class ReminderScheduler:
                             triggered.add(key)
                             self.on_trigger(r)
 
-            time.sleep(30)
+            time.sleep(10)
