@@ -49,7 +49,8 @@ class SideBar(ft.Container):
         self.about_btn = ft.IconButton(
             icon = ft.Icons.QUESTION_MARK_ROUNDED,
             icon_size=15,
-            tooltip="About"
+            tooltip="About",
+            on_click = self.handle_click_about
         )
         self.theme_btn = ft.IconButton(
             icon = ft.Icons.DARK_MODE,

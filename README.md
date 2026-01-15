@@ -1,99 +1,93 @@
-# DesktopAssistant app
+### 把“想到的事”，变成“不会忘的事”
 
-## Run the app
+**Reminder** 是一款支持自然语言输入的智能提醒应用。
+你只需要像平时说话一样输入想法，它会帮你理解、整理，并生成清晰可靠的提醒。
 
-### uv
+> Think less about formatting.
+> Focus more on what matters.
 
-Run as a desktop app:
+---
 
-```
-uv run flet run
-```
+### 为什么做这个 App？
 
-Run as a web app:
+很多提醒工具要求你**先想清楚格式**，再填写内容：
+时间、重复规则、提醒方式……
+但现实中，我们往往只是**突然想起一件事**。
 
-```
-uv run flet run --web
-```
+这个 App 的目标很简单：
 
-### Poetry
+* 减少“记录一件事”本身的心理负担
+* 让提醒更贴近真实的表达方式
+* 把零散的想法，变成可执行的提醒
 
-Install dependencies from `pyproject.toml`:
+---
 
-```
-poetry install
-```
+### 你可以这样用它
 
-Run as a desktop app:
+你可以直接输入类似这样的话：
 
-```
-poetry run flet run
-```
+* “明天下午三点提醒我给王工回电话”
+* “每个月 1 号交房租”
+* “下周一开会前半小时提醒我准备材料”
 
-Run as a web app:
+应用会自动识别：
 
-```
-poetry run flet run --web
-```
+* 时间与日期
+* 重复规则
+* 提醒内容
 
-For more details on running the app, refer to the [Getting Started Guide](https://flet.dev/docs/getting-started/).
+并生成**可编辑的结构化提醒**，由你最终确认。
 
-## Build the app
+---
 
-### Android
+### 核心特点
 
-```
-flet build apk -v
-```
+* **自然语言理解**
+  支持日常表达，而不是固定模板
 
-For more details on building and signing `.apk` or `.aab`, refer to the [Android Packaging Guide](https://flet.dev/docs/publish/android/).
+* **解析结果可编辑**
+  AI 负责理解，你始终拥有最终控制权
 
-### iOS
+* **贴近生活的 Snooze 与重复逻辑**
+  不只是“5 分钟后”，而是真实可用的节奏
 
-```
-flet build ipa -v
-```
+* **桌面优先体验**
+  即开即用，不依赖浏览器
 
-For more details on building and signing `.ipa`, refer to the [iOS Packaging Guide](https://flet.dev/docs/publish/ios/).
+* **隐私友好设计**
+  支持自定义模型接口，不强绑定单一服务
 
-### macOS
+---
 
-```
-flet build macos -v
-```
+### 隐私说明
 
-For more details on building macOS package, refer to the [macOS Packaging Guide](https://flet.dev/docs/publish/macos/).
+* 提醒数据默认保存在本地
+* 应用不会主动上传你的提醒内容
+* 大模型仅用于解析文本（在你启用的前提下）
 
-### Linux
+你的数据，始终属于你。
 
-```
-flet build linux -v
-```
+---
 
-For more details on building Linux package, refer to the [Linux Packaging Guide](https://flet.dev/docs/publish/linux/).
+### 技术与状态
 
-### Windows
+**Built with**
 
-```
-flet build windows -v
-```
+* Python
+* Flet (Desktop UI)
+* Large Language Models (pluggable)
 
-For more details on building Windows package, refer to the [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).
+**Project status**
 
+* 持续迭代中
+* 功能根据真实使用体验不断调整
 
-        ┌────────────┐
-        │    UI      │  ← Flet
-        │ (Dialog)   │
-        └─────▲──────┘
-              │ 用户操作
-              │
-        ┌─────┴──────┐
-        │ Repository │  ← SQLite
-        │  (Data)    │
-        └─────▲──────┘
-              │ 查询
-              │
-        ┌─────┴──────┐
-        │ Scheduler  │  ← Thread
-        │  (Time)    │
-        └────────────┘
+---
+
+### 关于作者
+
+这个项目起源于一个很简单的动机：
+**“记住事情本身，不应该成为一件消耗精力的事。”**
+
+如果它也帮你减轻了一点负担，那就已经达成目的了。
+

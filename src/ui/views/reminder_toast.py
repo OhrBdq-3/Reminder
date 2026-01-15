@@ -14,13 +14,25 @@ class ReminderToast(ft.Container):
             controls = [
                 ft.Row(
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                    controls = [
+                    controls=[
                         ft.Row(
-                            controls = [
-                                ft.Icon(ft.Icons.NOTIFICATIONS_ACTIVE_OUTLINED, color = ft.Colors.AMBER_800),
-                                ft.Text(reminder.title, weight = ft.FontWeight.BOLD, size=16)
+                            controls=[
+                                ft.Icon(ft.Icons.NOTIFICATIONS_ACTIVE_OUTLINED, color=ft.Colors.AMBER_800),
+                                ft.Text(
+                                    reminder.title, 
+                                    weight=ft.FontWeight.BOLD, 
+                                    size=16,
+                                    # 关键 1：允许换行
+                                    no_wrap=False, 
+                                    # 关键 2：确保它在 Row 中占用剩余所有空间
+                                    expand=True, 
+                                )
                             ],
-                            spacing = 8,
+                            spacing=8,
+                            # 关键 3：让图标对齐文字顶端，防止文字多行时图标居中
+                            vertical_alignment=ft.CrossAxisAlignment.START,
+                            # 关键 4：给这个内部 Row 也设置 expand，让它填满外部 Row
+                            expand=True 
                         )
                     ]
                 ),
@@ -45,7 +57,7 @@ class ReminderToast(ft.Container):
             ]
         )
         self.width = 300
-        self.height = 150
+        #self.height = 150
         self.padding = 12
         self.border_radius = 12
         self.bgcolor = ft.Colors.SURFACE

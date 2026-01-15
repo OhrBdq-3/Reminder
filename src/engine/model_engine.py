@@ -1,6 +1,6 @@
 from config.reminder_schema import REMINDER_SCHEMA  
 from config.tone_prompt import TONE_MAP
-from utils.helper import load_setting
+from utils.helper import load_setting, handle_failed_ai_response
 import json
 
 class ChatEngine:
@@ -38,31 +38,30 @@ class ChatEngine:
                         yield char
 
     def get_json_response(self, content:str, tone: str = 'default'):
-        self._ensure_initialized() 
-        response = self.client.chat.completions.parse(
-            model=self.model_info["current_model"],
-            messages=[
-                {
-                    "role": "system",
-                    "content": TONE_MAP.get(tone, "default")
-                },
-                {
-                    "role": "user",
-                    "content": content
-                }
-            ],
-            response_format={
-                "type": "json_schema",
-                "json_schema": {
-                    "name": "reminder",
-                    "schema": REMINDER_SCHEMA
-                }
-            }
-        )
         try:
+            self._ensure_initialized() 
+            response = self.client.chat.completions.parse(
+                model=self.model_info["current_model"],
+                messages=[
+                    {
+                        "role": "system",
+                        "content": TONE_MAP.get(tone, "default")
+                    },
+                    {
+                        "role": "user",
+                        "content": content
+                    }
+                ],
+                response_format={
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "reminder",
+                        "schema": REMINDER_SCHEMA
+                    }
+                }
+            )
+            
             parsed_result = json.loads(response.choices[0].message.content)
-            print(parsed_result)
             return parsed_result
         except:
-            raise Exception("LLM failed to parse json")
-            
+            return handle_failed_ai_response()

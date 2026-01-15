@@ -19,6 +19,7 @@ class AIDialog(ft.AlertDialog):
             label="Describe your needs",
             on_submit=self.handle_submit,
             multiline=True,
+            shift_enter = True,
             min_lines=3,
             autofocus=True,
         )

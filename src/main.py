@@ -10,6 +10,7 @@ from ui.managers.cardlist_manager import CardListManager
 from ui.managers.sidebar_manager import SidebarManager
 from ui.views.setting_drawer import SettingDrawer
 from engine.model_engine import ChatEngine
+from ui.views.about import About
 from utils.helper import load_setting
 
 repo = ReminderRepository()
@@ -20,9 +21,9 @@ def main(page: ft.Page):
     page.title = "Reminder"
     page.theme_mode = ft.ThemeMode.LIGHT
 
-
+    about_page = About(page = page)
     setting_sheet = SettingDrawer(page = page)
-    sidebar = SideBar(setting_sheet=setting_sheet)
+    sidebar = SideBar(setting_sheet=setting_sheet, on_about_click=about_page.open_about)
     sidebar_manager = SidebarManager(sidebar=sidebar, page = page)
     sidebar.on_change_theme = sidebar_manager.change_theme
     sidebar.on_nav_change = sidebar_manager.toggle_bar

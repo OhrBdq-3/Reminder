@@ -45,13 +45,20 @@ class CardList(ft.ListView):
     def handle_delete(self, reminder):
         page_index = self.sidebar.nav.selected_index
         self.manager.delete(reminder)
-        self.reload_by_status(DEST_MAP[page_index])
+        if page_index == 0:
+            self.reload()
+        else:
+            self.reload_by_status(DEST_MAP[page_index])
         self.page.update()
         
     def open_edit(self, old_reminder):
         def handle_submit(title, time, desc, opt):
             self.manager.update(old_reminder, title, time, desc, opt)
-            self.reload()         
+            page_index = self.sidebar.nav.selected_index
+            if page_index == 0:
+                self.reload()
+            else:
+                self.reload_by_status(DEST_MAP[page_index])
             self.page.update()
 
         edit_field = EditField(
