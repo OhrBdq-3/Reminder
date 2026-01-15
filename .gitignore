@@ -163,5 +163,3 @@ cython_debug/
 storage/
 
 *.db
-
-config/

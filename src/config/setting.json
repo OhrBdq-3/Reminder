@@ -1,0 +1,10 @@
+{
+  "snooze_time": 5,
+  "enable_ai": false,
+  "ai_setting": {
+    "api_base_url": "https://api.openai.com/v1",
+    "api_key": "",
+    "current_model": "gpt-4o",
+    "tone": "default"
+  }
+}
