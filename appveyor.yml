@@ -15,5 +15,7 @@ build_script:
   - flet build windows --verbose
 
 artifacts:
-  - path: build\windows\*.exe
-    name: MyReminderApp_Windows
+  # 关键修改：指向整个文件夹，并指定类型为 zip
+  - path: build\windows
+    name: MyReminderApp_Full_Package
+    type: zip
