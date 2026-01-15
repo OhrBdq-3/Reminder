@@ -1,8 +1,19 @@
-image: Visual Studio 2022  # 使用云端预装好的环境
+image: Visual Studio 2022
 stack: python 3.10
+
+environment:
+  PYTHONIOENCODING: utf-8
+  PYTHONUTF8: 1
+
 install:
-  - pip install flet
+  - python -m pip install --upgrade pip
+  - pip install flet pyinstaller
+  - pip install -r requirements.txt
+
 build_script:
-  - flet build windows      # 在云端执行打包
+  - chcp 65001
+  - flet build windows --verbose
+
 artifacts:
-  - path: build/windows/*.exe  # 打包完后把 exe 提取出来供你下载
+  - path: build\windows\*.exe
+    name: MyReminderApp_Windows
