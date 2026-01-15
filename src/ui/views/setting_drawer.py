@@ -59,8 +59,8 @@ class SettingDrawer(ft.NavigationDrawer):
             value=self.setting.get("ai_setting").get("current_model","gpt-4o"),
             options=[
                 ft.dropdown.Option("gpt-4o"),
-                ft.dropdown.Option("claude-3-5-sonnet"),
-                ft.dropdown.Option("deepseek-chat"),
+                ft.dropdown.Option("gpt-5.2"),
+                ft.dropdown.Option("gpt-5-mini"),
             ],
         )
 
@@ -79,7 +79,7 @@ class SettingDrawer(ft.NavigationDrawer):
                 spacing=15,
                 controls=[
                     self._create_section_title("AI Settings"),
-                    self.base_url,
+                    #self.base_url,
                     self.api_key,
                     self.model_dropdown,
                     self.tone_dropdown

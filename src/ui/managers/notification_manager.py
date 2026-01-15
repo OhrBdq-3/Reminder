@@ -2,7 +2,6 @@ from ui.views.reminder_toast import ReminderToast
 import flet as ft
 from datetime import datetime, timedelta
 import os
-import json
 from utils.helper import load_setting
 
 SETTING_PATH = os.path.join(os.getcwd(),'src','config','setting.json')

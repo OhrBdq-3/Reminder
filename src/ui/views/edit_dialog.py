@@ -1,5 +1,4 @@
 import flet as ft
-import datetime
 
 class EditField(ft.AlertDialog):
     def __init__(self, old_reminder, on_submit=None):
