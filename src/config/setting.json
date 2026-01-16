@@ -1,6 +1,6 @@
 {
   "snooze_time": 5,
-  "enable_ai": false,
+  "enable_ai": true,
   "ai_setting": {
     "api_base_url": "https://api.openai.com/v1",
     "api_key": "",
