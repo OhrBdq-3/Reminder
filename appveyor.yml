@@ -12,7 +12,8 @@ install:
 
 build_script:
   - chcp 65001
-  - flet build windows --verbose --pyinstaller-args=--collect-all=openai --collect-all=jiter --collect-all=pydantic_core --collect-all=typing_inspection
+  - set PYINSTALLER_HOOKS_DIR=%CD%\hooks
+  - flet build windows --verbose
 
 artifacts:
   - path: build\windows
