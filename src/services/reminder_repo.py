@@ -1,11 +1,12 @@
 import sqlite3
 from models.reminder import Reminder
-import os
+import os,sys
 from datetime import datetime
 
 
-DB_PATH = os.path.join(os.getcwd(),"src","data/reminders.db")
-
+if not os.path.exists(os.path.join(os.getcwd(),'src','data')):
+    os.mkdir(os.path.join(os.getcwd(),'src','data'))
+DB_PATH = os.path.join(os.getcwd(), 'src','data','reminders.db')
 
 class ReminderRepository:
     def __init__(self):
