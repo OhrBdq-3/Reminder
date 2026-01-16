@@ -1,4 +1,5 @@
 image: Visual Studio 2022
+
 stack: python 3.10
 
 environment:
@@ -6,16 +7,19 @@ environment:
   PYTHONUTF8: 1
 
 install:
-  - python --version
   - python -m pip install --upgrade pip
+
   - pip install -r requirements.txt
 
 build_script:
+  # Windows 控制台 UTF-8
   - chcp 65001
-  - set PYINSTALLER_HOOKS_DIR=%CD%\hooks
+
+  # 构建 Windows 桌面应用
   - flet build windows --verbose
 
 artifacts:
+  # 打包整个 windows 构建目录
   - path: build\windows
-    name: MyReminderApp_Full_Package
+    name: MyReminderApp_Windows
     type: zip
