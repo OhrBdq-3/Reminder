@@ -9,18 +9,18 @@ DEST_MAP = {
 class SidebarManager:
     def __init__(self, sidebar, page, card_list = None):
         self.sidebar = sidebar
-        self.page = page
+        self._page = page
         self.card_list = card_list
         self.collapsed = False
 
     def change_theme(self):
-        self.page.theme_mode = (
+        self._page.theme_mode = (
             ft.ThemeMode.DARK
-            if self.page.theme_mode == ft.ThemeMode.LIGHT
+            if self._page.theme_mode == ft.ThemeMode.LIGHT
             else ft.ThemeMode.LIGHT
         )
-        self.sidebar.theme_btn.icon = ft.Icons.DARK_MODE if self.page.theme_mode == ft.ThemeMode.LIGHT else ft.Icons.LIGHT_MODE
-        self.page.update()
+        self.sidebar.theme_btn.icon = ft.Icons.DARK_MODE if self._page.theme_mode == ft.ThemeMode.LIGHT else ft.Icons.LIGHT_MODE
+        self._page.update()
 
     def toggle_bar(self):
         self.collapsed = not self.collapsed

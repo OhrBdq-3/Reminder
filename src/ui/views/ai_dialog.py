@@ -8,7 +8,7 @@ ai_executor = ThreadPoolExecutor(max_workers=2)
 class AIDialog(ft.AlertDialog):
     def __init__(self, page, on_parsed = None, on_submit=None, on_update = None):
         super().__init__()
-        self.page = page
+        self._page = page
         self.on_submit = on_submit
         self.on_parsed = on_parsed
         self.on_update = on_update
@@ -77,6 +77,7 @@ class AIDialog(ft.AlertDialog):
             padding=20,
             width=380,
         )
+        self._page.overlay.append(self)
 
     def handle_submit(self, e):
         if self.on_submit:
@@ -97,12 +98,12 @@ class AIDialog(ft.AlertDialog):
     def _parse_ai_task(self, text, placeholder):
         tone = load_setting().get("ai_setting").get("tone","default")
         result = self.on_parsed(text, tone)
-        self.page.run_thread(
+        self._page.run_thread(
             self._apply_ai_result,
             placeholder,
             result
         )
-        self.page.update()
+        self._page.update()
 
 
     def _apply_ai_result(self, placeholder, result):
@@ -114,7 +115,7 @@ class AIDialog(ft.AlertDialog):
                 result.get("description", ""),
                 result.get("option", ""),
             )
-        self.page.update()
+        self._page.update()
 
     def cancel_submit(self, e):
         if self.cancel_submit:
@@ -131,5 +132,5 @@ class AIDialog(ft.AlertDialog):
 
     def open_dialog(self, e):
         self.reset_form()
-        self.page.open(self)
-        self.page.update()
+        self.open = True
+        self._page.update()

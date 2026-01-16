@@ -6,26 +6,26 @@ SNOOZE_OPTIONS = [5, 10, 15, 20, 30, 45, 60]
 
 class SettingDrawer(ft.NavigationDrawer):
     def __init__(self, page: ft.Page, on_save=None):
-        super().__init__()
+        super().__init__(on_dismiss=self._on_dismiss)
 
-        
-        self.page = page
+        self._page = page
         self.on_save = on_save
-        self.setting = load_setting()
-        ai_cfg = self.setting.get("ai_setting")
-        if ai_cfg is None:
-            ai_cfg = {}
-        
+
+        self.setting = load_setting() or {}
+
+        ai_cfg = self.setting.get("ai_setting", {})
+
         api_base = ai_cfg.get("api_base_url", "https://api.openai.com/v1")
         api_key = ai_cfg.get("api_key", "")
         model_name = ai_cfg.get("model", "gpt-5")
-        tone = ai_cfg.get("tone","default")
+        tone = ai_cfg.get("tone", "default")
 
-        
+        # ---------------- Snooze ----------------
+        self.selected_snooze = self.setting.get(
+            "snooze_time", SNOOZE_OPTIONS[1]
+        )
 
-        self.selected_snooze = self.setting.get("snooze_time",SNOOZE_OPTIONS[1])
-
-        self.snooze_picker = ft.Dropdown(
+        self.snooze_picker = ft.DropdownM2(
             value=str(self.selected_snooze),
             options=[
                 ft.dropdown.Option(str(m), f"{m} min")
@@ -39,30 +39,30 @@ class SettingDrawer(ft.NavigationDrawer):
             controls=[
                 self._create_section_title("Snooze Time"),
                 ft.Container(
-                    padding=ft.padding.symmetric(horizontal=12, vertical=6),
+                    padding=ft.Padding.symmetric(horizontal=12, vertical=6),
                     border_radius=10,
                     content=self.snooze_picker,
                 ),
             ],
         )
 
-
+        # ---------------- AI Switch ----------------
         self.enable_gpt = ft.Switch(
             label="Enable AI",
-            value=self.setting.get("enable_ai",False),
+            value=self.setting.get("enable_ai", False),
             on_change=self.toggle_gpt_settings,
         )
 
         self.base_url = ft.TextField(
             label="API Base URL",
-            value=api_base
+            value=api_base,
         )
 
         self.api_key = ft.TextField(
             label="API Key",
             password=True,
             can_reveal_password=True,
-            value = api_key
+            value=api_key,
         )
 
         self.model_dropdown = ft.Dropdown(
@@ -76,37 +76,44 @@ class SettingDrawer(ft.NavigationDrawer):
         )
 
         self.tone_dropdown = ft.Dropdown(
-            label = "Tone",
-            value = tone,
-            options = [
+            label="Tone",
+            value=tone,
+            options=[
                 ft.dropdown.Option("default"),
                 ft.dropdown.Option("creative"),
-            ]
+            ],
         )
 
         self.gpt_setting_container = ft.Container(
-            visible=self.setting.get("enable_ai",False),
+            visible=self.setting.get("enable_ai", False),
             content=ft.Column(
                 spacing=15,
                 controls=[
                     self._create_section_title("AI Settings"),
-                    #self.base_url,
                     self.api_key,
                     self.model_dropdown,
-                    self.tone_dropdown
+                    self.tone_dropdown,
                 ],
             ),
         )
 
-
+        # ---------------- Drawer Content ----------------
         self.controls = [
             ft.Container(
-                padding=ft.padding.only(top=40, left=20, right=20, bottom=10),
+                padding=ft.Padding.only(
+                    top=40, left=20, right=20, bottom=10
+                ),
                 content=ft.Row(
                     spacing=10,
                     controls=[
-                        ft.Icon(ft.Icons.SETTINGS_SUGGEST_ROUNDED, size=30),
-                        ft.Text("Setting", size=24, weight=ft.FontWeight.BOLD),
+                        ft.Icon(
+                            ft.Icons.SETTINGS_SUGGEST_ROUNDED, size=30
+                        ),
+                        ft.Text(
+                            "Setting",
+                            size=24,
+                            weight=ft.FontWeight.BOLD,
+                        ),
                     ],
                 ),
             ),
@@ -145,7 +152,9 @@ class SettingDrawer(ft.NavigationDrawer):
             ),
         ]
 
-
+    # ------------------------------------------------
+    # Helpers
+    # ------------------------------------------------
     def _create_section_title(self, text: str):
         return ft.Text(
             text,
@@ -154,35 +163,55 @@ class SettingDrawer(ft.NavigationDrawer):
             color=ft.Colors.BLUE,
         )
 
+    # ------------------------------------------------
+    # Events
+    # ------------------------------------------------
     def on_snooze_change(self, e):
-        self.selected_snooze = int(e.data)
+        if self.snooze_picker.value:
+            self.selected_snooze = int(self.snooze_picker.value)
 
     def toggle_gpt_settings(self, e):
         self.gpt_setting_container.visible = self.enable_gpt.value
-        self.page.update()
+        self._page.update()
 
-    def handle_save(self, e):
+    async def handle_save(self, e):
         config = self.setting.copy()
-        config = {
-            "snooze_time":self.selected_snooze,
-            "enable_ai":self.enable_gpt.value,
-            "ai_setting":{
-                "api_base_url":self.base_url.value,
-                "api_key":self.api_key.value,
-                "current_model":self.model_dropdown.value,
-                "tone":self.tone_dropdown.value,
+        config.update(
+            {
+                "snooze_time": self.selected_snooze,
+                "enable_ai": self.enable_gpt.value,
+                "ai_setting": {
+                    "api_base_url": self.base_url.value,
+                    "api_key": self.api_key.value,
+                    "model": self.model_dropdown.value,
+                    "tone": self.tone_dropdown.value,
+                },
             }
-        }
-
-        
+        )
         write_setting(config)
-        self.close_drawer()
 
-    def open_drawer(self, e=None):
-        self.page.drawer = self
-        self.open = True
-        self.page.update()
+        if self.on_save:
+            self.on_save(config)
 
-    def close_drawer(self, e=None):
-        self.open = False
-        self.page.update()
+        await self.page.close_drawer()
+
+    # ------------------------------------------------
+    # Drawer Control (0.80+ 正确方式)
+    # ------------------------------------------------
+    async def open_drawer(self, e=None):
+        #self._page.show_dialog(self)
+        await self.page.show_drawer()
+        #self.open = True
+        #self._page.update()
+
+    async def close_drawer(self, e=None):
+        #self.open = False
+        await self.page.close_drawer()
+        #self._page.pop_dialog(self)
+        #self._page.update()
+
+    def _on_dismiss(self, e):
+        print("Drawer dismissed!")
+        #self.open = False
+        #self._page.pop_dialog(self)
+        #self._page.update()

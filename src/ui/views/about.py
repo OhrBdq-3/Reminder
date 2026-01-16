@@ -7,8 +7,7 @@ def get_resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):
         # 打包后的路径
         return os.path.join(sys._MEIPASS, relative_path)
-    # 开发环境路径 (假设当前文件在 ui/views/ 目录下，向上退两级到根目录)
-    # 如果 about_page.py 在根目录，则直接用 os.path.abspath(".")
+
     return os.path.join(os.path.abspath("."), relative_path)
 
 class About(ft.BottomSheet):
@@ -35,9 +34,9 @@ class About(ft.BottomSheet):
                 ft.Markdown(about_text),
             ],
         )
-        super().__init__(content=about_container, is_scroll_controlled=True)
-        self.page = page
+        super().__init__(content=about_container, scrollable=True)
+        self._page = page
 
     def open_about(self, e=None):
-        self.page.open(self)
-        self.page.update()
+        self.open=True
+        self._page.update()

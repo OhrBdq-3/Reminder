@@ -3,7 +3,7 @@ from services.reminder_process import create_reminder
 class CardListManager:
     def __init__(self, repo, page, on_refresh = None):
         self.repo = repo
-        self.page = page
+        self._page = page
         self.on_refresh = on_refresh
 
     def delete(self, reminder):

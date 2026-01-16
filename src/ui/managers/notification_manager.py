@@ -14,7 +14,7 @@ class NotificationManager:
                  sidebar,
                  on_refresh,
                  ):
-        self.page = page
+        self._page = page
         self.repo = repo
         self.sidebar = sidebar
         self.on_refresh = on_refresh
@@ -25,7 +25,7 @@ class NotificationManager:
 
         self.stack = ft.Stack(
             expand=True,
-            alignment=ft.alignment.bottom_right,
+            alignment=ft.Alignment.BOTTOM_RIGHT,
             right=0,
             bottom=0,
             controls=[
@@ -36,8 +36,8 @@ class NotificationManager:
             ],
         )
 
-        self.page.overlay.append(self.stack)
-        self.page.update()
+        self._page.overlay.append(self.stack)
+        self._page.update()
 
     def show(self, reminder):
         toast = ReminderToast(
@@ -46,7 +46,7 @@ class NotificationManager:
             on_snooze=self._on_snooze,
         )
         self.toast_column.controls.append(toast)
-        self.page.update()
+        self._page.update()
 
     def _on_done(self, reminder):
         if reminder.repeat == "none":
@@ -76,7 +76,7 @@ class NotificationManager:
         for c in list(self.toast_column.controls):
             if c.reminder.id == reminder.id:
                 self.toast_column.controls.remove(c)
-        self.page.update()
+        self._page.update()
 
 
     def _after_triggered(self,reminder):

@@ -56,7 +56,7 @@ class ReminderCard(ft.Card):
         self.up_title = self.reminder.title.title()
         self.pending_hint = ft.Chip(
             label=ft.Text(self.chip_status, width=65, text_align=ft.TextAlign.CENTER, size=11),
-            label_style=ft.TextStyle(color=self.status_color, weight=ft.FontWeight.W_700),
+            label_text_style=ft.TextStyle(color=self.status_color, weight=ft.FontWeight.W_700),
             visual_density=ft.VisualDensity.COMPACT,
         )
         
@@ -146,7 +146,7 @@ class ReminderCard(ft.Card):
             ],
             spacing=0
         )
-
+        
         self.content = ft.Container(
             content=self.main_column,
             padding=10,
@@ -164,6 +164,6 @@ class ReminderCard(ft.Card):
     def on_hover(self, e):
         if self.is_generating:
             return
-        is_hovered = e.data == "true"
+        is_hovered = e.data
         self.actions.opacity = 1.0 if is_hovered else 0.0
         self.actions.update()

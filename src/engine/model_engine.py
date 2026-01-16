@@ -22,7 +22,7 @@ class ChatEngine:
         config = load_setting().get("ai_setting")
         enable_ai = config.get("enable_ai")
         if enable_ai:
-            required = ["api_base_url", "current_model", "api_key"]
+            required = ["api_base_url", "model", "api_key"]
             for k in required:
                 if k not in config:
                     raise ValueError(f"Missing config field: {k}")
@@ -30,7 +30,7 @@ class ChatEngine:
 
     def get_response(self, content: str):
         responses = self.client.chat.completions.create(
-            model=self.model_info["current_model"],
+            model=self.model_info["model"],
             messages=[{"role": "user", "content": content}],
             stream=True,
         )
@@ -43,7 +43,7 @@ class ChatEngine:
         try:
             self._ensure_initialized() 
             response = self.client.chat.completions.parse(
-                model=self.model_info["current_model"],
+                model=self.model_info["model"],
                 messages=[
                     {
                         "role": "system",

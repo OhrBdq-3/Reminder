@@ -38,7 +38,7 @@ def main(page: ft.Page):
         # 2. 基础组件初始化
         about_page = About(page=page)
         setting_sheet = SettingDrawer(page=page)
-        
+        page.drawer = setting_sheet
         sidebar = SideBar(setting_sheet=setting_sheet, on_about_click=about_page.open_about)
         sidebar_manager = SidebarManager(sidebar=sidebar, page=page)
         sidebar.on_change_theme = sidebar_manager.change_theme
@@ -67,7 +67,7 @@ def main(page: ft.Page):
         input_field = InputField(page=page, on_submit=card_list.add_card)
         ai_input_field = AIDialog(page=page, on_parsed=ai_engine.get_json_response, on_submit=card_list.add_card, on_update=card_list_manager.update)
         
-        page.overlay.append(input_field.time_input)
+        #page.overlay.append(input_field.time_input)
 
         def on_add_click(e):
             try:
@@ -80,7 +80,7 @@ def main(page: ft.Page):
                 print(f"Click Error: {ex}")
 
         add_button = ft.TextButton(
-            text="Add Reminder",
+            content="Add Reminder",
             icon=ft.Icons.ADD,
             on_click=on_add_click
         )
@@ -108,4 +108,4 @@ def main(page: ft.Page):
         show_crash_error(error_info)
 
 
-ft.app(target=main)
+ft.run(main)

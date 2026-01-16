@@ -12,7 +12,7 @@ class SideBar(ft.Container):
         super().__init__()
 
         self.width = 220
-        self.padding = ft.padding.symmetric(vertical=12)
+        self.padding = ft.Padding.symmetric(vertical=12)
         self.setting_sheet = setting_sheet
         self.on_change_theme = on_change_theme
         self.on_nav_change = on_nav_change
@@ -72,14 +72,14 @@ class SideBar(ft.Container):
             expand=True,
             controls=[
                 ft.Container(
-                    alignment=ft.alignment.center,
-                    padding=ft.padding.only(bottom=8),
+                    alignment=ft.Alignment.CENTER,
+                    padding=ft.Padding.only(bottom=8),
                     content=self.header
                 ),
                 self.nav,
                 ft.Container(expand=True),
                 ft.Container(
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                     content = ft.Row(
                         [
                             self.setting_btn,

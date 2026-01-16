@@ -122,6 +122,9 @@ class EditField(ft.AlertDialog):
             width=380,
         )
 
+        self._page.overlay.append(self)
+        self._page.overlay.append(self.time_input)
+        
     def on_time_change(self, e):
         time_val = self.time_input.value
         if time_val:
