@@ -3,6 +3,7 @@ from config.tone_prompt import TONE_MAP
 from utils.helper import load_setting, handle_failed_ai_response, get_app_data_path
 import json
 import traceback, os
+from openai import OpenAI 
 
 class ChatEngine:
     def __init__(self,):
@@ -11,7 +12,7 @@ class ChatEngine:
 
     def _ensure_initialized(self):
         if self.client is None:
-            from openai import OpenAI 
+            #from openai import OpenAI 
             self.model_info = self._load_config()
             self.client = OpenAI(
                 api_key=self.model_info["api_key"],
