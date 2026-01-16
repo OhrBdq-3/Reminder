@@ -6,15 +6,22 @@ environment:
   PYTHONUTF8: 1
 
 install:
+  - python --version
   - python -m pip install --upgrade pip
   - pip install -r requirements.txt
 
 build_script:
   - chcp 65001
-  - flet build windows --verbose
+  - >
+    flet build windows --verbose
+    --pyinstaller-args="
+      --collect-all openai
+      --collect-all jiter
+      --collect-all pydantic_core
+      --collect-all typing_inspection
+    "
 
 artifacts:
-  # 关键修改：指向整个文件夹，并指定类型为 zip
   - path: build\windows
     name: MyReminderApp_Full_Package
     type: zip
