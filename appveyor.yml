@@ -13,7 +13,7 @@ install:
 
 build_script:
   - chcp 65001
-  - flet build windows --verbose
+  - echo y | flet build windows --verbose
 
 artifacts:
   - path: build\windows
