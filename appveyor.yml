@@ -5,21 +5,17 @@ stack: python 3.10
 environment:
   PYTHONIOENCODING: utf-8
   PYTHONUTF8: 1
+  FLET_FORCE_INSTALL_FLUTTER: 1   # ⭐ 关键：自动安装 Flutter
 
 install:
   - python -m pip install --upgrade pip
-
   - pip install -r requirements.txt
 
 build_script:
-  # Windows 控制台 UTF-8
   - chcp 65001
-
-  # 构建 Windows 桌面应用
   - flet build windows --verbose
 
 artifacts:
-  # 打包整个 windows 构建目录
   - path: build\windows
     name: MyReminderApp_Windows
     type: zip
