@@ -11,7 +11,7 @@ install:
 
 build_script:
   - chcp 65001
-  - flet build windows --include-packages openai,httpx,anyio,httpcore,pydantic,certifi
+  - flet build windows --verbose
 
 artifacts:
   # 关键修改：指向整个文件夹，并指定类型为 zip
