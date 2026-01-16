@@ -2,8 +2,16 @@ import os
 import json
 from datetime import datetime
 
-SETTING_PATH = os.path.join(os.getcwd(),'src','config','setting.json')
+def get_app_data_path():
+    # 获取 C:\Users\用户名\AppData\Roaming\MyReminderApp
+    app_data_dir = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "MyReminderApp")
+    if not os.path.exists(app_data_dir):
+        os.makedirs(app_data_dir)
+    return app_data_dir
 
+# 修复后的配置文件路径
+SETTING_PATH = os.path.join(get_app_data_path(), 'setting.json')
+print(SETTING_PATH)
 def load_setting(path = SETTING_PATH):
     if not os.path.exists(path):
         with open(path,'w',encoding = 'utf-8') as f:

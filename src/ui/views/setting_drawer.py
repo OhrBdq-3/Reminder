@@ -12,6 +12,17 @@ class SettingDrawer(ft.NavigationDrawer):
         self.page = page
         self.on_save = on_save
         self.setting = load_setting()
+        ai_cfg = self.setting.get("ai_setting")
+        if ai_cfg is None:
+            ai_cfg = {}
+        
+        api_base = ai_cfg.get("api_base_url", "https://api.openai.com/v1")
+        api_key = ai_cfg.get("api_key", "")
+        model_name = ai_cfg.get("model", "gpt-5")
+        tone = ai_cfg.get("tone","default")
+
+        
+
         self.selected_snooze = self.setting.get("snooze_time",SNOOZE_OPTIONS[1])
 
         self.snooze_picker = ft.Dropdown(
@@ -44,19 +55,19 @@ class SettingDrawer(ft.NavigationDrawer):
 
         self.base_url = ft.TextField(
             label="API Base URL",
-            value=self.setting.get("ai_setting").get("api_base_url","https://api.openai.com/v1"),
+            value=api_base
         )
 
         self.api_key = ft.TextField(
             label="API Key",
             password=True,
             can_reveal_password=True,
-            value = self.setting.get("ai_setting").get("api_key",""),
+            value = api_key
         )
 
         self.model_dropdown = ft.Dropdown(
             label="Current Model",
-            value=self.setting.get("ai_setting").get("current_model","gpt-4o"),
+            value=model_name,
             options=[
                 ft.dropdown.Option("gpt-4o"),
                 ft.dropdown.Option("gpt-5.2"),
@@ -66,7 +77,7 @@ class SettingDrawer(ft.NavigationDrawer):
 
         self.tone_dropdown = ft.Dropdown(
             label = "Tone",
-            value = self.setting.get("ai_setting").get("tone","default"),
+            value = tone,
             options = [
                 ft.dropdown.Option("default"),
                 ft.dropdown.Option("creative"),

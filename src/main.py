@@ -12,21 +12,17 @@ from ui.views.setting_drawer import SettingDrawer
 from engine.model_engine import ChatEngine
 from ui.views.about import About
 from utils.helper import load_setting
+import threading 
+import traceback 
 
-repo = ReminderRepository()
+
 
     
-
-import flet as ft
-import threading # 必须导入
-import traceback # 用于打印详细错误
-# ... 你的其他 import 保持不变 ...
 
 def main(page: ft.Page):
     page.title = "Reminder"
     page.theme_mode = ft.ThemeMode.LIGHT
-    
-    # 1. 定义一个全局异常显示函数
+    repo = ReminderRepository()
     def show_crash_error(error_msg):
         page.clean()
         page.add(
@@ -110,5 +106,6 @@ def main(page: ft.Page):
         # 捕获所有初始化阶段的报错并显示
         error_info = traceback.format_exc()
         show_crash_error(error_info)
+
 
 ft.app(target=main)

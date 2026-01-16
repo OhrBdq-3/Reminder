@@ -4,9 +4,18 @@ import os,sys
 from datetime import datetime
 
 
-if not os.path.exists(os.path.join(os.getcwd(),'src','data')):
-    os.mkdir(os.path.join(os.getcwd(),'src','data'))
-DB_PATH = os.path.join(os.getcwd(), 'src','data','reminders.db')
+def get_db_path():
+    app_name = "MyReminderApp"
+    # 获取系统的 AppData 目录
+    app_data_dir = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), app_name)
+    
+    # 如果文件夹不存在则创建
+    if not os.path.exists(app_data_dir):
+        os.makedirs(app_data_dir)
+        
+    return os.path.join(app_data_dir, "reminders.db")
+
+DB_PATH = get_db_path()
 
 class ReminderRepository:
     def __init__(self):
