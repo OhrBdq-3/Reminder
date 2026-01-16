@@ -1,8 +1,9 @@
 import json
-import os
+import os,sys
 import flet as ft
 
-ABOUT = os.path.join(os.getcwd(),'src','config','about.md')
+
+ABOUT = os.path.join(os.getcwd(), 'src','config','about.md')
 
 class About(ft.BottomSheet):
     def __init__(self, page):
