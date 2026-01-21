@@ -1,5 +1,4 @@
 import flet as ft
-import datetime
 
 class EditField(ft.AlertDialog):
     def __init__(self, old_reminder, on_submit=None):
@@ -31,7 +30,7 @@ class EditField(ft.AlertDialog):
             on_focus=self.show_time_picker,
             on_submit=self.handle_submit,
         )
-       # print(self.old_reminder.base_time.strftime("%H:%M"))
+
         self.time_input = ft.TimePicker(
             value=self.old_reminder.base_time,
             error_invalid_text="Time out of range",
@@ -123,6 +122,9 @@ class EditField(ft.AlertDialog):
             width=380,
         )
 
+        self._page.overlay.append(self)
+        self._page.overlay.append(self.time_input)
+        
     def on_time_change(self, e):
         time_val = self.time_input.value
         if time_val:

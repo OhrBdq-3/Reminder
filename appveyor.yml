@@ -1,0 +1,21 @@
+image: Visual Studio 2022
+
+stack: python 3.10
+
+environment:
+  PYTHONIOENCODING: utf-8
+  PYTHONUTF8: 1
+  FLET_FORCE_INSTALL_FLUTTER: 1   # ⭐ 关键：自动安装 Flutter
+
+install:
+  - python -m pip install --upgrade pip
+  - pip install -r requirements.txt
+
+build_script:
+  - chcp 65001
+  - echo y | flet build windows --verbose
+
+artifacts:
+  - path: build\windows
+    name: MyReminderApp_Windows
+    type: zip

@@ -1,11 +1,11 @@
 [project]
-name = "desktop-assistant"
+name = "Reminder"
 version = "0.1.0"
 description = ""
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [
-    { name = "Flet developer", email = "you@example.com" }
+    { name = "Xingyu Yan", email = "719209517@qq.com" }
 ]
 dependencies = [
   "flet==0.28.3"
@@ -18,13 +18,13 @@ org = "com.mycompany"
 
 # project display name that is used as an app title on Android and iOS home screens,
 # shown in window titles and about app dialogs on desktop.
-product = "desktop-assistant"
+product = "Reminder"
 
 # company name to display in about app dialogs
-company = "Flet"
+company = "Xingyu Yan"
 
 # copyright text to display in about app dialogs
-copyright = "Copyright (C) 2025 by Flet"
+copyright = "Copyright (C) 2025 by Xingyu Yan"
 
 [tool.flet.app]
 path = "src"

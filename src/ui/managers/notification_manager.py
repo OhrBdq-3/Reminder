@@ -1,11 +1,22 @@
 from ui.views.reminder_toast import ReminderToast
 import flet as ft
 from datetime import datetime, timedelta
+import os
+from utils.helper import load_setting
+
+SETTING_PATH = os.path.join(os.getcwd(),'src','config','setting.json')
+
 
 class NotificationManager:
-    def __init__(self, page, repo, on_refresh):
-        self.page = page
+    def __init__(self, 
+                 page, 
+                 repo, 
+                 sidebar,
+                 on_refresh,
+                 ):
+        self._page = page
         self.repo = repo
+        self.sidebar = sidebar
         self.on_refresh = on_refresh
         self.toast_column = ft.Column(
             spacing=10,
@@ -14,7 +25,7 @@ class NotificationManager:
 
         self.stack = ft.Stack(
             expand=True,
-            alignment=ft.alignment.bottom_right,
+            alignment=ft.Alignment.BOTTOM_RIGHT,
             right=0,
             bottom=0,
             controls=[
@@ -25,8 +36,8 @@ class NotificationManager:
             ],
         )
 
-        self.page.overlay.append(self.stack)
-        self.page.update()
+        self._page.overlay.append(self.stack)
+        self._page.update()
 
     def show(self, reminder):
         toast = ReminderToast(
@@ -35,7 +46,7 @@ class NotificationManager:
             on_snooze=self._on_snooze,
         )
         self.toast_column.controls.append(toast)
-        self.page.update()
+        self._page.update()
 
     def _on_done(self, reminder):
         if reminder.repeat == "none":
@@ -45,25 +56,27 @@ class NotificationManager:
         reminder.is_snoozed = 0
         self.repo.update(reminder)
         self._remove(reminder)
-        self.on_refresh()
+        self.sidebar.nav.selected_index = 2
+        self.on_refresh('done')
 
-        print(f"Done: {reminder.title}")
 
     def _on_snooze(self, reminder):
-        reminder.next_trigger_time = datetime.now() + timedelta(minutes=10)
+        setting = load_setting()
+        snooze_time = setting.get("snooze_time", 10)
+        reminder.next_trigger_time = datetime.now() + timedelta(minutes=snooze_time)
         reminder.is_snoozed = 1
         reminder.status = "pending"
         self.repo.update(reminder)
         self._remove(reminder)
-        self.on_refresh()
+        self.sidebar.nav.selected_index = 1
+        self.on_refresh("pending")
 
-        print(f"Snoozed: {reminder.title}")
 
     def _remove(self, reminder):
         for c in list(self.toast_column.controls):
             if c.reminder.id == reminder.id:
                 self.toast_column.controls.remove(c)
-        self.page.update()
+        self._page.update()
 
 
     def _after_triggered(self,reminder):
@@ -89,3 +102,4 @@ class NotificationManager:
                     break
             reminder.next_trigger_time = d
         self.repo.update(reminder)
+

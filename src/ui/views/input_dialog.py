@@ -4,7 +4,7 @@ import datetime
 class InputField(ft.AlertDialog):
     def __init__(self, page, on_submit=None):
         super().__init__()
-        self.page = page
+        self._page = page
         self.on_submit = on_submit
         self.title = ft.Text("New Reminder", weight=ft.FontWeight.BOLD, size = 18)
 
@@ -35,7 +35,7 @@ class InputField(ft.AlertDialog):
             error_invalid_text="Time out of range",
             help_text="Pick your time slot",
             on_change=self.on_time_change,
-            time_picker_entry_mode = ft.TimePickerEntryMode.INPUT
+            entry_mode = ft.TimePickerEntryMode.INPUT
         )
 
         self.day_picker = ft.Dropdown(
@@ -121,6 +121,9 @@ class InputField(ft.AlertDialog):
             width=380,
         )
 
+        self._page.overlay.append(self)
+        self._page.overlay.append(self.time_input)
+
     def on_time_change(self, e):
         time_val = self.time_input.value
         if time_val:
@@ -131,13 +134,17 @@ class InputField(ft.AlertDialog):
 
     def handle_submit(self, e):
         if self.on_submit:
+            # 获取 time 对象
+            t = self.time_input.value
+            # 强制格式化为 HH:MM:SS，去掉讨厌的微秒
+            formatted_time = t.strftime("%H:%M:%S") if t else "00:00:00"
+            
             self.on_submit(
                 self.title_textfield.value,
-                str(self.time_input.value), 
+                formatted_time,  # 传这个变量，不要传 str(t)
                 self.description_input.value,
                 self.day_picker.value, 
             )
-
         self.close(e)
 
 
@@ -167,5 +174,5 @@ class InputField(ft.AlertDialog):
         
     def open_dialog(self, e):
         self.reset_form()
-        self.page.open(self)
-        self.page.update()
+        self.open = True
+        self._page.update()

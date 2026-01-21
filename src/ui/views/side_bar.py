@@ -2,25 +2,30 @@ import flet as ft
 
 
 class SideBar(ft.Container):
-    def __init__(self, on_change_theme = None, on_nav_change = None, on_settings_click = None, on_about_click = None):
+    def __init__(self, 
+                 setting_sheet = None,
+                 on_change_theme = None, 
+                 on_nav_change = None, 
+                 on_settings_click = None, 
+                 on_about_click = None, 
+                 on_select_dest = None):
         super().__init__()
 
         self.width = 220
-        self.padding = ft.padding.symmetric(vertical=12)
+        self.padding = ft.Padding.symmetric(vertical=12)
+        self.setting_sheet = setting_sheet
         self.on_change_theme = on_change_theme
         self.on_nav_change = on_nav_change
         self.on_settings_click = on_settings_click
+        self.on_select_dest = on_select_dest
         self.on_about_click = on_about_click
         self.animate = ft.Animation(260, ft.AnimationCurve.EASE_IN_OUT)
         
         self.nav = ft.NavigationRail(
             selected_index=1,
-            #label_type=ft.NavigationRailLabelType.ALL,
             group_alignment=-0.9,
             expand = True,
-            #min_width=100,
             extended=True,
-            #min_extended_width=200,
             destinations=[
                 ft.NavigationRailDestination(
                     icon=ft.Icons.LIST_ALT, label="All"
@@ -29,24 +34,23 @@ class SideBar(ft.Container):
                     icon=ft.Icons.SCHEDULE, label="Upcoming"
                 ),
                 ft.NavigationRailDestination(
-                    icon=ft.Icons.SNOOZE, label="Snoozed"
-                ),
-                ft.NavigationRailDestination(
                     icon=ft.Icons.CHECK_CIRCLE_OUTLINE, label="Completed"
                 ),
             ],
-            on_change=lambda e: print("Selected destination:", e.control.selected_index),
+            on_change=self.handle_select_dest,
         )
 
         self.setting_btn = ft.IconButton(
             icon=ft.Icons.SETTINGS_ROUNDED,
             icon_size = 15,
-            tooltip="Setting"
+            tooltip="Setting",
+            on_click = self.setting_sheet.open_drawer
         )
         self.about_btn = ft.IconButton(
             icon = ft.Icons.QUESTION_MARK_ROUNDED,
             icon_size=15,
-            tooltip="About"
+            tooltip="About",
+            on_click = self.handle_click_about
         )
         self.theme_btn = ft.IconButton(
             icon = ft.Icons.DARK_MODE,
@@ -68,14 +72,14 @@ class SideBar(ft.Container):
             expand=True,
             controls=[
                 ft.Container(
-                    alignment=ft.alignment.center,
-                    padding=ft.padding.only(bottom=8),
+                    alignment=ft.Alignment.CENTER,
+                    padding=ft.Padding.only(bottom=8),
                     content=self.header
                 ),
                 self.nav,
                 ft.Container(expand=True),
                 ft.Container(
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                     content = ft.Row(
                         [
                             self.setting_btn,
@@ -103,3 +107,7 @@ class SideBar(ft.Container):
     def handle_click_about(self, e):
         if self.on_about_click:
             self.on_about_click()
+
+    def handle_select_dest(self, e):
+        if self.on_select_dest:
+            self.on_select_dest(e)
