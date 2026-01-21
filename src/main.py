@@ -11,13 +11,12 @@ from ui.managers.sidebar_manager import SidebarManager
 from ui.views.setting_drawer import SettingDrawer
 from engine.model_engine import ChatEngine
 from ui.views.about import About
+from ui.views.pull_mail_btn import PullMailBtn
 from utils.helper import load_setting
 import threading 
 import traceback 
 
 
-
-    
 
 def main(page: ft.Page):
     page.title = "Reminder"
@@ -35,7 +34,7 @@ def main(page: ft.Page):
         page.update()
 
     try:
-        # 2. 基础组件初始化
+
         about_page = About(page=page)
         setting_sheet = SettingDrawer(page=page)
         page.drawer = setting_sheet
@@ -50,15 +49,14 @@ def main(page: ft.Page):
         sidebar_manager.card_list = card_list
         card_list_manager.on_refresh = card_list.reload_by_status
         
-        # 3. 核心管理类
+
         notification_manager = NotificationManager(page=page, repo=repo, sidebar=sidebar, on_refresh=card_list.reload_by_status)
         
-        # --- 重点修改：Scheduler 使用线程启动 ---
         scheduler = ReminderScheduler(
             repo=repo,
             on_trigger=notification_manager.show
         )
-        # 使用 daemon=True 确保主程序退出时，子线程也退出
+
         thread = threading.Thread(target=scheduler.start, daemon=True)
         thread.start() 
         
@@ -66,8 +64,8 @@ def main(page: ft.Page):
 
         input_field = InputField(page=page, on_submit=card_list.add_card)
         ai_input_field = AIDialog(page=page, on_parsed=ai_engine.get_json_response, on_submit=card_list.add_card, on_update=card_list_manager.update)
-        
-        #page.overlay.append(input_field.time_input)
+        pull_button = PullMailBtn(page = page,on_submit=card_list.add_card,on_update=card_list_manager.update)
+
 
         def on_add_click(e):
             try:
@@ -79,12 +77,21 @@ def main(page: ft.Page):
             except Exception as ex:
                 print(f"Click Error: {ex}")
 
+        
         add_button = ft.TextButton(
             content="Add Reminder",
             icon=ft.Icons.ADD,
             on_click=on_add_click
         )
         
+        
+        button_row = ft.Row(
+            controls = [
+                add_button,
+                pull_button
+            ],
+            
+        )
         main_row = ft.Row(
             [
                 sidebar,
@@ -94,16 +101,13 @@ def main(page: ft.Page):
             expand=True
         )
 
-        # 4. 先添加布局
         page.add(main_row)
-        page.add(add_button)
-        
-        # 5. 最后异步加载数据，防止阻塞首屏渲染
+        page.add(button_row)
+
         card_list.reload_by_status('pending')
         page.update()
 
     except Exception:
-        # 捕获所有初始化阶段的报错并显示
         error_info = traceback.format_exc()
         show_crash_error(error_info)
 

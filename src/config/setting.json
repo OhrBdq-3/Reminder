@@ -6,5 +6,11 @@
     "api_key": "",
     "current_model": "gpt-4o",
     "tone": "default"
+  },
+  "enable_automail": false,
+  "mail_setting":{
+    "imap_server":"imap.gmail.com",
+    "account":"",
+    "app_password":""
   }
 }

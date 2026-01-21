@@ -12,7 +12,6 @@ class ChatEngine:
 
     def _ensure_initialized(self):
         if self.client is None:
-            #from openai import OpenAI 
             self.model_info = self._load_config()
             self.client = OpenAI(
                 api_key=self.model_info["api_key"],
@@ -66,13 +65,10 @@ class ChatEngine:
             parsed_result = json.loads(response.choices[0].message.content)
             return parsed_result
         except Exception as e:
-            # 打包后看不到控制台，所以我们将错误写进一个本地文件
-
             log_path = os.path.join(get_app_data_path(), "ai_debug_log.txt")
             with open(log_path, "w", encoding="utf-8") as f:
                 f.write(f"Error Type: {type(e).__name__}\n")
                 f.write(f"Error Message: {str(e)}\n")
                 f.write(traceback.format_exc())
             
-            # 同时也返回失败处理
             return handle_failed_ai_response()

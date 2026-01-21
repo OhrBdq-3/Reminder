@@ -3,7 +3,6 @@ import json
 from datetime import datetime
 
 def get_app_data_path():
-    # 获取 C:\Users\用户名\AppData\Roaming\MyReminderApp
     app_data_dir = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "MyReminderApp")
     if not os.path.exists(app_data_dir):
         os.makedirs(app_data_dir)

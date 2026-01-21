@@ -19,6 +19,11 @@ class SettingDrawer(ft.NavigationDrawer):
         api_key = ai_cfg.get("api_key", "")
         model_name = ai_cfg.get("model", "gpt-5")
         tone = ai_cfg.get("tone", "default")
+        
+        mail_cfg = self.setting.get("mail_setting", {})
+        imap_server = mail_cfg.get("imap_server", "imap.gmail.com")
+        account = mail_cfg.get("account", "")
+        app_password = mail_cfg.get("app_password", "")
 
         # ---------------- Snooze ----------------
         self.selected_snooze = self.setting.get(
@@ -37,7 +42,7 @@ class SettingDrawer(ft.NavigationDrawer):
         self.snooze_section = ft.Column(
             spacing=10,
             controls=[
-                self._create_section_title("Snooze Time"),
+                self._create_section_title("Snooze Time (min)"),
                 ft.Container(
                     padding=ft.Padding.symmetric(horizontal=12, vertical=6),
                     border_radius=10,
@@ -66,8 +71,8 @@ class SettingDrawer(ft.NavigationDrawer):
         )
 
         self.model_dropdown = ft.Dropdown(
-            label="Current Model",
-            value=model_name,
+            #label="Current Model",
+            value="gpt-4o",
             options=[
                 ft.dropdown.Option("gpt-4o"),
                 ft.dropdown.Option("gpt-5.2"),
@@ -96,6 +101,45 @@ class SettingDrawer(ft.NavigationDrawer):
                 ],
             ),
         )
+
+
+        # ---------------- AutoMail Switch ----------------
+        self.enable_automail = ft.Switch(
+            label="Enable E-mail",
+            value=self.setting.get("enable_automail", False),
+            on_change=self.toggle_mail_settings,
+        )
+
+        self.imap_server = ft.TextField(
+            label="IMAP SERVER",
+            value=imap_server,
+        )
+
+        self.account = ft.TextField(
+            label="ACCOUNT",
+            value=account,
+        )
+
+        self.app_password = ft.TextField(
+            label="APP PASSWORD",
+            password=True,
+            can_reveal_password=True,
+            value=app_password,
+        )
+
+        self.mail_setting_container = ft.Container(
+            visible=self.setting.get("enable_automail", False),
+            content=ft.Column(
+                spacing=15,
+                controls=[
+                    self._create_section_title("Mail Settings"),
+                    self.imap_server,
+                    self.account,
+                    self.app_password,
+                ],
+            ),
+        )
+
 
         # ---------------- Drawer Content ----------------
         self.controls = [
@@ -128,6 +172,8 @@ class SettingDrawer(ft.NavigationDrawer):
                         self.snooze_section,
                         self.enable_gpt,
                         self.gpt_setting_container,
+                        self.enable_automail,
+                        self.mail_setting_container
                     ],
                 ),
             ),
@@ -173,6 +219,10 @@ class SettingDrawer(ft.NavigationDrawer):
     def toggle_gpt_settings(self, e):
         self.gpt_setting_container.visible = self.enable_gpt.value
         self._page.update()
+        
+    def toggle_mail_settings(self, e):
+        self.mail_setting_container.visible = self.enable_automail.value
+        self._page.update()
 
     async def handle_save(self, e):
         config = self.setting.copy()
@@ -186,6 +236,12 @@ class SettingDrawer(ft.NavigationDrawer):
                     "model": self.model_dropdown.value,
                     "tone": self.tone_dropdown.value,
                 },
+                "enable_automail": self.enable_automail.value,
+                "mail_setting":{
+                    "imap_server":self.imap_server.value,
+                    "account":self.account.value,
+                    "app_password":self.app_password.value
+                }
             }
         )
         write_setting(config)
@@ -210,8 +266,9 @@ class SettingDrawer(ft.NavigationDrawer):
         #self._page.pop_dialog(self)
         #self._page.update()
 
-    def _on_dismiss(self, e):
-        print("Drawer dismissed!")
+    async def _on_dismiss(self, e):
+        await self.handle_save(e)
+        #print("Drawer dismissed!")
         #self.open = False
         #self._page.pop_dialog(self)
         #self._page.update()

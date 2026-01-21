@@ -42,6 +42,7 @@ def create_reminder(id: str,
         trigger_date = d
         repeat = "weekend"
     base_time_parsed = datetime.strptime(base_time, "%H:%M:%S").time()
+    #print(trigger_date)
     next_trigger_time = datetime.combine(trigger_date, base_time_parsed)
 
     return Reminder(
